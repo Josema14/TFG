@@ -10,21 +10,21 @@ const Navbar = () => {
          </NavLink>
          <Bars />
          <NavMenu>
-            <NavLink to="/about" activeStyle>
-                About
+            <NavLink to="/products">
+                Productos
             </NavLink>
-            <NavLink to="/services" activeStyle>
-                Services
+            <NavLink to="/services" >
+                Servicios
             </NavLink>
-            <NavLink to="/contact-us" activeStyle>
-                Contact Us
+            <NavLink to="/contact-us" >
+                Contáctanos
             </NavLink>
-            <NavLink to="/sign-up" activeStyle>
-                Sign Up
+            <NavLink to="/sign-up" >
+                Registrarse
             </NavLink>
          </NavMenu>
          <NavBtn>
-            <NavBtnLink to='/signin'>Sign In</NavBtnLink>
+            <NavBtnLink to='/login'>Iniciar Sesión</NavBtnLink>
          </NavBtn>
        </Nav>
     </>
