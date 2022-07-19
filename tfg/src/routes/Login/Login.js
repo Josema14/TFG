@@ -1,16 +1,9 @@
 import React, {useState} from 'react'
-import { useNavigate, useLocation} from "react-router-dom";
-import "./Registro.css"
+import { useNavigate } from "react-router-dom";
+import "./Login.css"
+function Login({Login, error}) {
 
-function Registro({Login, error}) {
-    
-    const {state} = useLocation();
-    if(state!=null){
-    const { id, name} = state; // Read values passed on state
-    console.log(id,name)
-    }
     const [form,setForm] = useState({
-        name: "",
         email: "",
         password:"",
     })
@@ -25,24 +18,35 @@ function Registro({Login, error}) {
 
     async function onSubmit(e){
         e.preventDefault();
-        
-        const newUser = {...form};
 
-        await fetch("http://localhost:5000/record/add", {
-            method: "POST",
+       const response = await fetch(`http://localhost:5000/record/${form.email}&${form.password}`, {
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(newUser),
+           
           })
           .catch(error => {
             window.alert(error);
             return;
           });
         
-          setForm({ name: "", email: "", password: "" });
+          if (!response.ok) {
+            const message = `An error occurred: ${response.statusText}`;
+            window.alert(message);
+            return;
+          }
+      
+          const records = await response.json();
+          if(records){
+            console.log(records)
+            navigate("/",{ state: {id: records._id, name: records.name}});
+          }
+          else{
+            setForm({ name: "", email: "", password: "" });
+          }
           
-          navigate("/");
+          
         }
  
     return (
@@ -59,9 +63,8 @@ function Registro({Login, error}) {
 
             <div className='form-container'>
                 <form action='#' onSubmit={onSubmit}>
-                    <h1>Registro</h1>
+                    <h1>Inicio de Sesión</h1>
                     <div>
-                    <input type="text" placeholder="Nombre de Usuario" value={form.name} onChange={(e) => updateForm({name: e.target.value})} />
                     <input type="email" placeholder="Email" value={form.email} onChange={(e) => updateForm({email: e.target.value})} />
 			        <input type="password" placeholder="Contraseña" value={form.password} onChange={(e) => updateForm({password: e.target.value})} />
                     </div>
@@ -76,4 +79,4 @@ function Registro({Login, error}) {
   )
 }
 
-export default Registro
+export default Login
