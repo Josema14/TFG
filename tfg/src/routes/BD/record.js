@@ -5,8 +5,8 @@ const express = require("express");
 
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
-// The router will be added as a middleware and will take control of requests starting with path /record.
-const recordRoutes = express.Router();
+// The router will be added as a middleware and will take control of requests.
+const expyRoutes = express.Router();
  
 // This will help us connect to the database
 const dbo = require("../../server/db/conn");
@@ -15,8 +15,8 @@ const dbo = require("../../server/db/conn");
 const ObjectId = require("mongodb").ObjectId;
  
  
-// This section will help you get a list of all the records.
-recordRoutes.route("/record").get(function (req, res) {
+// This section will help you get a list of all the users.
+expyRoutes.route("/user").get(function (req, res) {
  let db_connect = dbo.getDb("users");
  db_connect
    .collection("users")
@@ -27,10 +27,10 @@ recordRoutes.route("/record").get(function (req, res) {
    });
 });
  
-// This section will help you get a single record by email and password
-recordRoutes.route("/record/:email&:password").get(function (req, res) {
+// This section will help you get a single user by email and password
+expyRoutes.route("/user").post(function (req, res) {
  let db_connect = dbo.getDb("users");
- let myquery = { email: req.params.email, password: req.params.password };
+ let myquery = { email: req.body.email, password: req.body.password };
  db_connect
      .collection("users")
      .findOne(myquery, function (err, result) {
@@ -40,8 +40,8 @@ recordRoutes.route("/record/:email&:password").get(function (req, res) {
      });
 });
  
-// This section will help you create a new record.
-recordRoutes.route("/record/add").post(function (req, response) {
+// This section will help you create a new user.
+expyRoutes.route("/user/add").post(function (req, response) {
  let db_connect = dbo.getDb();
  let myobj = {
    name: req.body.name,
@@ -55,7 +55,7 @@ recordRoutes.route("/record/add").post(function (req, response) {
 });
  
 // This section will help you update a record by id.
-recordRoutes.route("/update/:id").post(function (req, response) {
+expyRoutes.route("/update/:id").post(function (req, response) {
  let db_connect = dbo.getDb(); 
  let myquery = { _id: ObjectId( req.params.id )}; 
  let newvalues = {   
@@ -68,7 +68,7 @@ recordRoutes.route("/update/:id").post(function (req, response) {
 });
  
 // This section will help you delete a record
-recordRoutes.route("/:id").delete((req, response) => {
+expyRoutes.route("/:id").delete((req, response) => {
  let db_connect = dbo.getDb();
  let myquery = { _id: ObjectId( req.params.id )};
  db_connect.collection("records").deleteOne(myquery, function (err, obj) {
@@ -78,4 +78,4 @@ recordRoutes.route("/:id").delete((req, response) => {
  });
 });
  
-module.exports = recordRoutes;
+module.exports = expyRoutes;

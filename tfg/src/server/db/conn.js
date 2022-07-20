@@ -8,6 +8,7 @@ const client = new MongoClient(Db, {
 var _db;
  
 module.exports = {
+  //Función para conectarse a la base de datos
   connectToServer: function (callback) {
     client.connect(function (err, db) {
       // Verify we got a good "db" object
@@ -20,6 +21,7 @@ module.exports = {
          });
   },
  
+  //Devuelve la BD
   getDb: function () {
     return _db;
   },

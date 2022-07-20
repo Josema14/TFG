@@ -18,13 +18,19 @@ function Login({Login, error}) {
 
     async function onSubmit(e){
         e.preventDefault();
+        //Creamos la Query
+        let findUser ={
+          email:form.email,
+          password: form.password
+        }
 
-       const response = await fetch(`http://localhost:5000/record/${form.email}&${form.password}`, {
-            method: "GET",
+      //Realizamos la petición
+       const response = await fetch(`http://localhost:5000/user`, {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-           
+            body: JSON.stringify(findUser),
           })
           .catch(error => {
             window.alert(error);
@@ -36,11 +42,12 @@ function Login({Login, error}) {
             window.alert(message);
             return;
           }
-      
-          const records = await response.json();
-          if(records){
-            console.log(records)
-            navigate("/",{ state: {id: records._id, name: records.name}});
+          
+          //Obtenemos el usuario y cambiamos a la página principal
+          const user = await response.json();
+          if(user){
+            console.log(user)
+            navigate("/",{ state: {id: user._id, name: user.name}});
           }
           else{
             setForm({ name: "", email: "", password: "" });

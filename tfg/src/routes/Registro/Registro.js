@@ -27,8 +27,8 @@ function Registro({Login, error}) {
         e.preventDefault();
         
         const newUser = {...form};
-
-        await fetch("http://localhost:5000/record/add", {
+        //Realizamos el post para añadir un usuario
+        await fetch("http://localhost:5000/user/add", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
