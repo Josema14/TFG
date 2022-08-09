@@ -1,14 +1,14 @@
-body {
- 
-    background-repeat: no-repeat;
-    background: #1B2021;
+body{
+	background: #e1e5f2;
+	
 }
-
-.container{
+.register-container{
   display: flex;
   justify-content: center;
+
+ 
 }
-.container-register {
+.register-container-card {
   background-color: white;
   display:flex;
   width: 50%;
@@ -17,7 +17,7 @@ body {
   height: 50vh;
   
   border-radius: 5px;
-
+  box-shadow: 0 2px 8px 0 rgba(7, 18, 37, 0.2)
   
 
 
@@ -36,10 +36,10 @@ p {
 	margin: 20px 0 30px;
 }
 
-button {
+.register-form-container form button {
 	border-radius: 20px;
-	border: 1px solid #FF4B2B;
-	background-color: #FF4B2B;
+	border: 1px solid #1F7A8C;
+	background-color: #1F7A8C;
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
@@ -50,14 +50,15 @@ button {
 
 }
 
-button:active {
+.register-form-container form button:active {
 	transform: scale(0.95);
 }
 
-button:focus {
-	outline: none;
+.register-form-container form button:hover{
+	cursor:pointer;
 }
-.form-container{
+
+.register-form-container{
   width: 50%;
 
   border-radius: 5px;
@@ -65,7 +66,7 @@ button:focus {
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
-form {
+.register-form-container form {
 	background-color: #FFFFFF;
 	display: flex;
 	align-items: center;
@@ -77,7 +78,7 @@ form {
 	text-align: center;
 }
 
-input {
+.register-form-container form input {
 	background-color: #eee;
 	border: none;
 	padding: 12px 15px;

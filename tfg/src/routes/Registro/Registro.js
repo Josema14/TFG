@@ -28,7 +28,7 @@ function Registro({Login, error}) {
         
         const newUser = {...form};
         //Realizamos el post para añadir un usuario
-        await fetch("http://localhost:5000/user/add", {
+        await fetch("http://localhost:5000/register", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -46,8 +46,9 @@ function Registro({Login, error}) {
         }
  
     return (
-        <div className='container'>
-        <div className='container-register'>
+        <div className='register-body'>
+        <div className='register-container'>
+        <div className='register-container-card'>
             <div className='overlay-container'>
                 <div className='overlay'>
                   
@@ -57,13 +58,13 @@ function Registro({Login, error}) {
                 </div>
             </div>
 
-            <div className='form-container'>
+            <div className='register-form-container'>
                 <form action='#' onSubmit={onSubmit}>
                     <h1>Registro</h1>
                     <div>
-                    <input type="text" placeholder="Nombre de Usuario" value={form.name} onChange={(e) => updateForm({name: e.target.value})} />
-                    <input type="email" placeholder="Email" value={form.email} onChange={(e) => updateForm({email: e.target.value})} />
-			        <input type="password" placeholder="Contraseña" value={form.password} onChange={(e) => updateForm({password: e.target.value})} />
+                    <input type="text" required placeholder="Nombre de Usuario" value={form.name} onChange={(e) => updateForm({name: e.target.value})} />
+                    <input type="email" required placeholder="Email" value={form.email} onChange={(e) => updateForm({email: e.target.value})} />
+			        <input type="password" required placeholder="Contraseña" value={form.password} onChange={(e) => updateForm({password: e.target.value})} />
                     </div>
 			        <button type='submit'>Confirmar</button>
                 </form>
@@ -72,7 +73,7 @@ function Registro({Login, error}) {
 
         </div>
         </div>
-
+        </div>
   )
 }
 

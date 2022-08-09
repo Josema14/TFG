@@ -1,14 +1,18 @@
-body {
- 
-  background-repeat: no-repeat;
-  background: #1B2021;
+body{
+	background: #e1e5f2;
+	
 }
 
 .container{
 display: flex;
 justify-content: center;
+
+
+
+background: #e1e5f2
 }
 .container-register {
+  
 background-color: white;
 display:flex;
 width: 50%;
@@ -38,8 +42,8 @@ margin: 20px 0 30px;
 
 button {
 border-radius: 20px;
-border: 1px solid #FF4B2B;
-background-color: #FF4B2B;
+border: 1px solid #1F7A8C;
+background-color: #1F7A8C;
 color: #FFFFFF;
 font-size: 12px;
 font-weight: bold;
@@ -59,7 +63,6 @@ outline: none;
 }
 .form-container{
 width: 50%;
-
 border-radius: 5px;
 border-right: 2px solid white;
 border-top: 2px solid white;
@@ -78,6 +81,7 @@ text-align: center;
 }
 
 input {
+
 background-color: #eee;
 border: none;
 padding: 12px 15px;
