@@ -1,0 +1,14 @@
+.Title-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.Title-img{
+    width: 100%;
+    height: 470px;
+
+    filter: brightness(50%);
+
+}
