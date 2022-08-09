@@ -25,7 +25,7 @@ function Login({Login, error}) {
         }
 
       //Realizamos la petición
-       const response = await fetch(`http://localhost:5000/user`, {
+       const response = await fetch(`http://localhost:5000/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

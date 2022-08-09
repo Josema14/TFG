@@ -5,6 +5,7 @@ const app = express();
 const cors = require("cors");
 //Importamos la conexion a la BD
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const dbConnect = require("./db/dbConnect")
 
 //Importamos el schema
@@ -18,13 +19,13 @@ const port = process.env.PORT || 5000;
 app.use(cors({ origin: true, credentials: true  }));
 app.use(express.json());
 
-
+//Inicio
 app.get("/", (request, response, next) => {
   response.json({ message: "Hey! This is your server response!" });
   next();
 });
 
-
+//Registro
 app.post("/register", (request, response) => {
   bcrypt.hash(request.body.password, 10)
   .then((hashedPassword) => {
@@ -60,6 +61,53 @@ app.post("/register", (request, response) => {
     })
   })
   });
+
+  //Login
+
+  app.post("/login", (request, response) => {
+    User.findOne({ email: request.body.email})
+    .then((user) =>{
+          bcrypt.compare(request.body.password, user.password)
+      .then( (passwordCheck) => {
+  
+        // check if password matches
+        if(!passwordCheck) {
+          return response.status(400).send({
+            message: "Passwords does not match",
+            error,
+          })
+        }
+  
+        const token = jwt.sign(
+          {
+            userId: user._id,
+            userEmail: user.email,
+          },
+          "RANDOM-TOKEN",
+          {expiresIn: "24h"}
+        );
+  
+        // return success response
+        response.status(200).send({
+          message: "Login Successful",
+          email: user.email,
+          token,
+        });
+      })
+      .catch((error) => {
+        response.status(400).send({
+          message: "Passwords does not match",
+          error,
+        })
+      })
+  })
+    .catch((e) => {
+      response.status(404).send({
+        message: "Email not found",
+        e,
+      })
+    })
+  })
   
   app.listen(port)
 /*
