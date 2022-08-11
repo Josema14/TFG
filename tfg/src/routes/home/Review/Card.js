@@ -11,11 +11,14 @@ export default function Card(props) {
         </div>
 
         <div className='card-text-container'>
-            <h3>{props.titulo}</h3>
+          <span className='card-text-container-name'> {props.nombre}</span>
+            <h2>{props.titulo}</h2>
             <p>{props.texto}</p>
 
 
+        </div>
 
+        <div className='card-footer'>
         </div>
 
     </div>
