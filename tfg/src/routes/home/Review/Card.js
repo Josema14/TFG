@@ -6,7 +6,7 @@ export default function Card(props) {
     <div className='card-container'>
         <div className='card-image-container'>
 
-          <img src={require("./imagenes/Emma.png")} />
+        <img src={`/${props.imagen}.jpg`}/>
 
         </div>
 

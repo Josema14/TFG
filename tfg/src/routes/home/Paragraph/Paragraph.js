@@ -1,17 +1,22 @@
 import React from 'react'
-import Carousel from './Carousel'
-export default function Paragraph() {
+import "./Paragraph.css"
+
+export default function Paragraph(props) {
   return (
     <>
     <div className='Paragraph-container'>
-
-        <h2>¿A qué nos dedicamos?</h2>
-        <p></p>
-
-
+          <div className='Paragraph-container-text'>
+        <h2>{props.title}</h2>
+        <hr/>
+        <p>
+          {props.text}
+        </p>
+        
+</div>
+    
         </div>
     
-    <Carousel/>
+
     </>
   )
 }

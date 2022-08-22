@@ -6,11 +6,11 @@ export default function Footer() {
   return (
     
     <div className="Footer-container">
-    <div class="Footer-row">
-    <a href="#"><i class="fa fa-facebook"></i></a>
-    <a href="#"><i class="fa fa-instagram"></i></a>
-    <a href="#"><i class="fa fa-youtube"></i></a>
-    <a href="#"><i class="fa fa-twitter"></i></a>
+    <div className="Footer-row">
+    <a href="#"><i className="fa fa-facebook"></i></a>
+    <a href="#"><i className="fa fa-instagram"></i></a>
+    <a href="#"><i className="fa fa-youtube"></i></a>
+    <a href="#"><i className="fa fa-twitter"></i></a>
     </div>
     
     <div class="Footer-row">
@@ -22,7 +22,7 @@ export default function Footer() {
     </ul>
     </div>
     
-    <div class="Footer-row">
+    <div className="Footer-row">
     <p>Trabajo de Fin de Grado Universidad de Murcia </p>
     <p>José María Espín Jiménez</p>
     </div>

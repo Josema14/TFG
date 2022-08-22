@@ -1,0 +1,58 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+.Paragraph-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+width: 33%;
+
+
+}
+.Paragraph-container:nth-child(2n+1){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+width: 33%;
+margin-top: -70px;
+
+}
+
+
+
+.Paragraph-container-text{
+    width: 50%;
+    text-align: center;
+    height: 180px;
+    
+}
+.Paragraph-container-text p {
+    font-family: 'Open Sans', cursive;
+
+
+    
+}
+
+.Paragraph-container-text h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 40px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(#9f05ff69, #fd5e086b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+
+.Paragraph-container-text hr {
+    border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+
+
