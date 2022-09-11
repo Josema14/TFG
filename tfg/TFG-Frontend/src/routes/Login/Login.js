@@ -1,8 +1,14 @@
 import React, {useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import "./Login.css"
+
+import { actionTypes } from '../../components/reducer'
+import { useStateValue } from '../../components/StateProvider'
 function Login({Login, error}) {
 
+ 
+
+  const [{}, dispatch] = useStateValue()
     const [form,setForm] = useState({
         email: "",
         password:"",
@@ -47,7 +53,10 @@ function Login({Login, error}) {
           const user = await response.json();
           if(user){
             console.log(user)
-            navigate("/",{ state: {id: user._id, name: user.name}});
+            dispatch({
+              type: actionTypes.SET_USER,
+              user: user})
+            navigate("/");
           }
           else{
             setForm({ name: "", email: "", password: "" });

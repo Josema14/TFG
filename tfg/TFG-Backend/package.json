@@ -1,0 +1,12 @@
+{
+  "name": "tfg-backend",
+  "version": "1.0.0",
+  "description": "Parte encargada del Backend del TFG",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "José María Espín Jiménez",
+  "license": "ISC"
+}

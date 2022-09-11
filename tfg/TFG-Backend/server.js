@@ -16,8 +16,9 @@ const User =require("./models/User")
 dbConnect();
 
 const port = process.env.PORT || 5000;
-app.use(cors({ origin: true, credentials: true  }));
 app.use(express.json());
+app.use(cors({ origin: true, credentials: true  }));
+
 
 //Inicio
 app.get("/", (request, response, next) => {
@@ -74,7 +75,7 @@ app.post("/register", (request, response) => {
         if(!passwordCheck) {
           return response.status(400).send({
             message: "Passwords does not match",
-            error,
+            
           })
         }
   
@@ -109,4 +110,5 @@ app.post("/register", (request, response) => {
     })
   })
   
-  app.listen(port)
+  ////Listener
+  app.listen(port, () => console.log(`Listening on localhost: ${port}`))
