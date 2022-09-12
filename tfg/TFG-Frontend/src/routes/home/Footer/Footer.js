@@ -13,7 +13,7 @@ export default function Footer() {
     <a href="#"><i className="fa fa-twitter"></i></a>
     </div>
     
-    <div class="Footer-row">
+    <div className="Footer-row">
     <ul>
     <li><a href="#">Contáctanos</a></li>
     <li><a href="#">Nuestros servicios</a></li>

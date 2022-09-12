@@ -1,0 +1,47 @@
+.item__container{
+    display:flex;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.75);
+
+}
+
+.itemImage__container{
+    width: 20%;
+    height: 20%;
+}
+
+.itemImage__container img{
+   width: 100%;
+  
+}
+
+.itemInfo__container{
+    display:flex;
+    flex-direction: column;
+
+}
+
+.itemDetails__container{
+    display:flex;
+    flex-direction: column;
+}
+
+.itemDButton__container{
+    display: flex;
+    
+}
+
+.itemDescription{
+    width: 50%;
+}
+
+.itemButtons{
+    width: 50%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+

@@ -10,7 +10,7 @@ const dbConnect = require("./db/dbConnect")
 
 //Importamos el schema
 const User =require("./models/User")
-
+const Item = require("./models/Item")
 //Conectamos con mongo
 
 dbConnect();
@@ -109,6 +109,42 @@ app.post("/register", (request, response) => {
       })
     })
   })
-  
+
+  //new Item
+  app.post("/item", (request, response) => {
+
+    const item = new Item({
+      
+      nombre: request.body.nombre,
+      ubicacion: request.body.ubicacion,
+      fechaInicio:request.body.fechaInicio,
+      imagen:request.body.imagen,
+      duracion: request.body.duracion,
+      descripcion: request.body.descripcion
+    })
+
+    item.save().then((result) => {
+      console.log("creando item")
+      response.status(201).send({
+        message: "Item Created Successfully",
+        result,
+      });
+    })
+    .catch((error) => {
+      console.log("ERROR",error)
+      response.status(500).send({
+        message: "Error creating item",
+        error,
+      });
+    });
+  })
+  //Repasar codigos de error
+  //GetItems
+  app.get("/item", (request, response) => {
+    Item.find({}).then((items) => {return response.status(200).send(items)})
+
+  })
+
+
   ////Listener
   app.listen(port, () => console.log(`Listening on localhost: ${port}`))
