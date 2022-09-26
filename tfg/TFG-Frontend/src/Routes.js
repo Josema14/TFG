@@ -7,6 +7,7 @@ import { useStateValue} from './components/StateProvider';
 import Shop from "./routes/shop/Shop"
 
 import Footer from "./routes/home/Footer/Footer"
+import Inventory from "./routes/Inventory/Inventory";
 export default function Links() {
 
   const [{user}, dispatch] = useStateValue()
@@ -24,6 +25,7 @@ export default function Links() {
           <Route exact path="/login" element={<Login/>}></Route>
           <Route exact path="/sign-up" element={<Registro/>}></Route>
           <Route exact path="/shop" element={<Shop/>}></Route>
+          <Route exact path="/inventory" element={<Inventory/>}></Route>
         </Routes>
   
         {/* Footers */}

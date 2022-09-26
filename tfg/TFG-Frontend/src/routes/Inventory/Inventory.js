@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from "react";
-import "./Shop.css";
-
+import React, {useState, useEffect} from 'react'
+import Item from '../shop/Item';
+import "../shop/Shop.css";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { IconButton } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,31 +18,34 @@ import {
 } from "@mui/material";
 import axios from '../../components/axios'
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { useStateValue} from '../../components/StateProvider';
 
-import Item from "./Item.js";
+export default function Inventory() {
 
-const Shop = () => {
-  //Variables de estado
-  const [selectedDate, setSelectedDate] = useState(null);
+    const [items, setItems] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null);
   const [duracion, setDuracion] = useState(null);
   const [page, setPage] = React.useState(1);
-  const [items, setItems] = useState([]);
+  const [{user}, dispatch] = useStateValue()
 
   const itemsPerPage = 4;
   const handleChange = (event, value) => {
     setPage(value);
   };
-  
 
   useEffect(() => {
-    axios.get("/item").then(res => {
-      setItems(res.data)
+     axios.get("/inventory",{
+        params: {
+            email:user.email
+          }
+        }).then(res => {
+      setItems(res.data.items)
+      console.log(res.data.items)
+      console.log(items)
   
    
     })
   }, [])
-
-
 
   return (
     <div className="shop">
@@ -111,6 +114,5 @@ const Shop = () => {
         </div>
     </div>
   );
-};
-
-export default Shop;
+  
+}

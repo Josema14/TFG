@@ -51,7 +51,7 @@ const Header = (login) => {
             </Tooltip>
            
             <Tooltip title="Inventario">
-            <IconButton>
+            <IconButton component={Link} to="/inventory">
               <InventoryIcon  />
             </IconButton>
             </Tooltip>

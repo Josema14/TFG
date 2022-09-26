@@ -1,7 +1,35 @@
 import "./Item.css"
+import { useNavigate, useLocation} from "react-router-dom";
+import { useStateValue} from '../../components/StateProvider';
 import { Button } from "@mui/material"
 const Item = (prop) => {
+
+    const [{user}, dispatch] = useStateValue()
     const item = prop.prop
+    const navigate = useNavigate();
+    //Función para realizar la compra
+   async function handlePurchase(e){
+    e.preventDefault();
+    
+    item.usuario = user;
+    //Realizamos el post para añadir un usuario
+    await fetch("http://localhost:5000/purchase", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      })
+      .catch(error => {
+        window.alert(error);
+        return;
+      });
+ 
+      
+      navigate("/inventory");
+    }
+
+
     return(
         <div className="item__container">
             <div className="itemImage__container">
@@ -26,7 +54,7 @@ const Item = (prop) => {
                 </div>
 
                 <div className="itemButtons">
-                    <Button>
+                    <Button onClick={handlePurchase}>
                         Comprar
                     </Button>
                 </div>

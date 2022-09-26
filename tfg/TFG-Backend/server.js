@@ -7,10 +7,16 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dbConnect = require("./db/dbConnect")
+const bodyParser = require('body-parser')
 
 //Importamos el schema
 const User =require("./models/User")
 const Item = require("./models/Item")
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 //Conectamos con mongo
 
 dbConnect();
@@ -144,7 +150,40 @@ app.post("/register", (request, response) => {
     Item.find({}).then((items) => {return response.status(200).send(items)})
 
   })
+  //Compra
+  app.post("/purchase", (request, response) => {
+    User.findOne({ email: request.body.usuario.email})
+    .then((user) =>{
+      user.inventory.unshift(request.body._id)
+      user.save().then((result) => {
+      response.status(201).send({
+        message: "Purchase Created Successfully",
+        result,
+      });
+    })
+     
+    })
+  })
 
+  //Recibir Items
+  app.get("/inventory", (request, response) =>{
+
+    User.findOne({email: request.query.email})
+    .then((user) =>{
+      let items;
+      const ids = user.inventory
+      Item.find().where('_id').in(ids).exec().then((result) => {
+      items = result;
+        console.log(result)
+        return response.status(200).send({
+          items
+        })
+  
+      })
+      
+     
+    })
+  })
 
   ////Listener
   app.listen(port, () => console.log(`Listening on localhost: ${port}`))
