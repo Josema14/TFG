@@ -29,6 +29,20 @@ const Item = (prop) => {
       navigate("/inventory");
     }
 
+    function padTo2Digits(num) {
+        return num.toString().padStart(2, '0');
+      }
+
+
+    function formatDate(date) {
+        var start = new Date(date)
+        return [
+          start.getFullYear(),
+          padTo2Digits(start.getMonth() + 1),
+          padTo2Digits(start.getDate()),
+        ].join('-');
+      }
+
 
     return(
         <div className="item__container">
@@ -40,7 +54,8 @@ const Item = (prop) => {
                 <div className="itemDetails__container">
                 <h3>{prop.prop.nombre}</h3>
                 <div >
-                <span>Fecha: {item.fechaInicio}</span>
+                <span>Fecha: {formatDate(item.fechaInicio)}</span>
+                
                 <span>Duración: {item.duracion} días</span>
                 <span>Precio: 200€</span>
 
