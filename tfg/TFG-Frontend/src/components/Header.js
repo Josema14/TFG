@@ -10,17 +10,18 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Tooltip from '@mui/material/Tooltip';
 import LoginIcon from "@mui/icons-material/Login";
 
-import { Link } from "react-router-dom";
-import { actionTypes } from './reducer'
-import { useStateValue } from './StateProvider'
+import { Link,useNavigate } from "react-router-dom";
+
 
 
 const Header = (login) => {
-   const [{user}, dispatch] = useStateValue()
-   function isLoggedIn(login){
+  const navigate = useNavigate();
 
-    console.log(login.login)
-    if (login.login) return true
+   function isLoggedIn(login){
+    //Iniciamos sesión con el email y lo guardamos en el almacenamiento local.
+   let email = localStorage.getItem("email")
+   console.log(email + "Logueado")
+    if (email !== "null") return true
     else return false;
 
    }
@@ -57,10 +58,8 @@ const Header = (login) => {
             </Tooltip>
 
             <IconButton onClick={() => {
-            dispatch({
-            type: actionTypes.SET_USER,
-            user: null})
-
+             localStorage.setItem("email",null)
+             navigate("/")
             }} >
               <ExitToAppIcon  />
             </IconButton>
