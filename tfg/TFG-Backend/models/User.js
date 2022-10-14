@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
         unique: false,
     },
 
-    name: {
+    user: {
         type: String,
         required: [true, "Introduzca un nombre"],
         unique: false,

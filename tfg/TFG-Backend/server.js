@@ -41,7 +41,7 @@ app.post("/register", (request, response) => {
       
       email: request.body.email,
       password: hashedPassword,
-      name: request.body.name,
+      user: request.body.user,
     })
     
     user.save().then((result) => {
@@ -52,9 +52,10 @@ app.post("/register", (request, response) => {
       });
     })
     .catch((error) => {
-      console.log("ERROR",error)
-      response.status(500).send({
-        message: "Error creating user",
+      
+      if (error.code ===11000)
+      response.status(400).send({
+        message: "Email already in use",
         error,
       });
     });
