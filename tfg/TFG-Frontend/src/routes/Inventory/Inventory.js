@@ -18,15 +18,15 @@ import {
 } from "@mui/material";
 import axios from '../../components/axios'
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { useStateValue} from '../../components/StateProvider';
 
-export default function Inventory() {
+
+export default function Inventory(props) {
 
     const [items, setItems] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
   const [duracion, setDuracion] = useState(null);
   const [page, setPage] = React.useState(1);
-  const [{user}, dispatch] = useStateValue()
+
 
   const itemsPerPage = 4;
   const handleChange = (event, value) => {
@@ -36,7 +36,7 @@ export default function Inventory() {
   useEffect(() => {
      axios.get("/inventory",{
         params: {
-            email:user.email
+            email:props.email
           }
         }).then(res => {
       setItems(res.data.items)

@@ -81,7 +81,7 @@ app.post("/register", (request, response) => {
         if(!passwordCheck) {
           return response.status(400).send({
             message: "Passwords does not match",
-            
+            type: 1
           })
         }
   
@@ -110,7 +110,8 @@ app.post("/register", (request, response) => {
   })
     .catch((e) => {
       response.status(404).send({
-        message: "Email not found",
+        message: "EmailError",
+        type: 2,
         e,
       })
     })
