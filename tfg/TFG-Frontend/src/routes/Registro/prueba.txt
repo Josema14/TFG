@@ -7,3 +7,18 @@
 </div>
 <button type='submit'>Confirmar</button>
 </form>
+
+
+
+
+    function isLoggedIn() {
+      //Iniciamos sesión con el email y lo guardamos en el almacenamiento local.
+      
+      
+      if (email !== "null") {
+        console.log("prueba" + "Logueado");
+        return true}
+      else {
+        console.log("noprueba" + "Logueado")
+        return false};
+    }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Navigate } from "react-router-dom";
 import "./Login.css";
 
 import TextField from "@mui/material/TextField";
@@ -8,7 +8,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import { Box } from "@mui/system";
 import axios from '../../components/axios'
 
-function Login() {
+function Login(props) {
 
   //Navegador para volver a la página principal
   const navigate = useNavigate();
@@ -54,6 +54,7 @@ function Login() {
 
       console.log(user);
       localStorage.setItem("email",user.email)
+      props.logIn()
       navigate("/");
     }) //Manejo de errores
     .catch(function (error) {
@@ -73,7 +74,9 @@ function Login() {
 
   return (
     //Componente
+    
     <div className="login-app">
+      
       {
         
           /*Contenedor*/

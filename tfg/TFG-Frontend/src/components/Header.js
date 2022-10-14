@@ -14,10 +14,10 @@ import { Link,useNavigate } from "react-router-dom";
 
 
 
-const Header = (login) => {
+const Header = (props) => {
   const navigate = useNavigate();
 
-   function isLoggedIn(login){
+   function isLoggedIn(){
     //Iniciamos sesión con el email y lo guardamos en el almacenamiento local.
    let email = localStorage.getItem("email")
    console.log(email + "Logueado")
@@ -43,7 +43,7 @@ const Header = (login) => {
 
       {/* Grupo derecho de botones */}
       <div className="header__groupButtons">
-        {isLoggedIn(login) === true ? (
+        {isLoggedIn() === true ? (
           <>
            <Tooltip title="Mensajes">
             <IconButton>
@@ -58,7 +58,8 @@ const Header = (login) => {
             </Tooltip>
 
             <IconButton onClick={() => {
-             localStorage.setItem("email",null)
+             localStorage.setItem("email","null")
+             props.logOut()
              navigate("/")
             }} >
               <ExitToAppIcon  />
