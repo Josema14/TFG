@@ -36,11 +36,18 @@ export default function Links() {
       <Header logOut={logOut} />
       <Item
         tipo={"Oficial"}
-        fecha={"20/12/1000"}
-        titulo={"Viaje por las Canarias"}
+        duracion={"22/12/00"}
+        fecha={"20/12/00"}
+        titulo={"Descanso en Tenerife"}
+        precio={"€ 200"}
+        pais={"Tenerife"}
+        cantidad={"20"}
+        person={"2"}
+        propietario={"TripTrades"}
         imagen={
-          "https://img.freepik.com/foto-gratis/vista-exuberante-selva-tropical-costa-rica_23-2148248823.jpg?w=1380&t=st=1664988927~exp=1664989527~hmac=7876a24bfd8498054316c0d650dfd03cc0a742ad01a9bf6ee23c0933fac1fa12"
+          "https://media.traveler.es/photos/62dd8b4297500f54d427e2eb/4:3/w_3407,h_2555,c_limit/GettyImages-1316911520.jpg"
         }
+        descripcion={"Descubre la isla de Tenerife, la más grande de las Canarias, con uno de sus mayores atractivos, el Teide y sus fantásticas playas."}
       />
 
       

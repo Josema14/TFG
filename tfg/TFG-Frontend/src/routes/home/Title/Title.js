@@ -10,7 +10,7 @@ export default function Title() {
     <div className='Title-header'>
     <div className="Title-overlay">
       <h1>"TripTrades"</h1>
-<h3>Empresa pionera en el intercambio de viajes online</h3>
+<h3 className='Title-overlay-text'>Empresa pionera en el intercambio de viajes online</h3>
 	<br></br>
 	<button>Nuestros productos</button>
 		</div>
