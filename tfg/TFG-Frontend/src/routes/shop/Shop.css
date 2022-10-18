@@ -23,6 +23,7 @@
 .searchBar__container{
     height: 10%;
     width: 100%;
+    background-color: white;
  
    
 }
@@ -50,5 +51,10 @@
     border-radius:0px 0px 10px 10px;
 
 }
+.shopItem__row{
+    display: flex;
+    margin:10px;
+    margin-left: 50px;
 
+}
 

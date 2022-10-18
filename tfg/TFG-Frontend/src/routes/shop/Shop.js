@@ -88,21 +88,18 @@ const Shop = () => {
 
         <div className="shopItem__container">
 
-        <div>
+        <div className="shopItem__row">
         
         {items.slice((page - 1) * itemsPerPage, (page - 1) * itemsPerPage + 3).map((item, i) => {
           
-          console.log((page - 1) * itemsPerPage)
-          console.log((page - 1) * itemsPerPage + 3)
-          console.log((page - 1) * itemsPerPage + 3)
-          console.log((page) * itemsPerPage)
+          
           
              return <Item prop = {item} key={i}/>
        
         })}
       </div>
 
-      <div>
+      <div className="shopItem__row">
         
         {items.slice((page - 1) * itemsPerPage + 3, (page) * itemsPerPage ).map((item, i) => {
           

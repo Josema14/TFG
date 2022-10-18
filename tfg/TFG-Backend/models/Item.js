@@ -5,10 +5,10 @@ const mongoose = require("mongoose");
 //Creamos el schema
 const ItemSchema = new mongoose.Schema({
     //Los campos de un item son: Ubicación, nombre, Fecha de inicio, Duración,Intercambio u oficial e imagen
-    nombre: {
+    titulo: {
         type: String,
         required: [true, "Introduzca un nombre"],
-        unique: [true, "Introduzca un nombre único"],
+        
     },
 
     ubicacion: {
@@ -17,9 +17,9 @@ const ItemSchema = new mongoose.Schema({
         unique: false,
     },
 
-    duracion:{
-        type: Number,
-        required: [true, "Introduce una duración"]
+    fechaFinal:{
+        type: Date,
+        required: [true, "Introduce una fecha de finalización"]
     },
 
     descripcion:{
@@ -30,17 +30,39 @@ const ItemSchema = new mongoose.Schema({
     fechaInicio: {
         type: Date,
         required: [true, "Introduzca una fecha de inicio"],
-        unique: false,
+       
     },
-    intercambio: {
-        type: Boolean,
-        default: false,
+    tipo: {
+        type: String,
+        required: [true, "Introduzca un tipo de paquete"],
     },
 
     imagen: {
         type: String,
         unique:false,
+    },
+
+    personas: {
+        type: Number,
+        unique: false,
+    },
+
+    precio: {
+        type: Number,
+        unique: false,
+    },
+
+    propietario: {
+        type: String,
+        unique:false,
+    },
+
+    cantidad: {
+        type: Number,
     }
+
+
+
 
 
 

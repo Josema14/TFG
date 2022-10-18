@@ -123,12 +123,17 @@ app.post("/register", (request, response) => {
 
     const item = new Item({
       
-      nombre: request.body.nombre,
+      titulo: request.body.titulo,
       ubicacion: request.body.ubicacion,
       fechaInicio:request.body.fechaInicio,
       imagen:request.body.imagen,
-      duracion: request.body.duracion,
-      descripcion: request.body.descripcion
+      fechaFinal: request.body.fechaFinal,
+      descripcion: request.body.descripcion,
+      tipo: request.body.tipo,
+      personas: request.body.personas,
+      precio: request.body.precio,
+      propietario: request.body.propietario,
+      cantidad: request.body.cantidad
     })
 
     item.save().then((result) => {

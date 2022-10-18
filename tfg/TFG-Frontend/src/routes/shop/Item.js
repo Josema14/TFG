@@ -22,9 +22,10 @@ export default function Card(props) {
 function formatDate(date) {
     var start = new Date(date)
     return [
-      start.getFullYear(),
-      padTo2Digits(start.getMonth() + 1),
+      
       padTo2Digits(start.getDate()),
+      padTo2Digits(start.getMonth() + 1),
+      start.getFullYear(),
     ].join('-');
   }
 
@@ -45,28 +46,28 @@ function formatDate(date) {
           <div className='card-item-text-header'>
             <div>
           <span className='tag'> {prop.tipo}</span>
-          <span className='tag'><a className='card-item-place' href={"https://www.google.es/maps/place/" + prop.pais} target="_blank" rel="noreferrer">{prop.pais}</a></span>
+          <span className='tag'><a className='card-item-place' href={"https://www.google.es/maps/place/" + prop.ubicacion} target="_blank" rel="noreferrer">{prop.ubicacion}</a></span>
           </div>
 
         
           <div className='card-item-text-icon'>
           <PersonIcon fontSize="small"/> 
-          <span>{prop.person}</span>
+          <span>{prop.personas}</span>
           </div>
 
 
           </div>
           
             <div className='card-item-title-container'>
-            <h3>{prop.nombre}</h3>
+            <h3>{prop.titulo}</h3>
 
             <div className='card-item-text-icon' >
             <CalendarMonthIcon fontSize='small'/>
-            <label>{prop.fecha + " - " +  prop.duracion}</label>
+            <label>{formatDate(prop.fechaInicio) + " - " +  formatDate(prop.fechaFinal)}</label>
             </div>
             </div>
 
-            <div>
+            <div style={{"margin-left" : "5px"}}>
 
             <p className='card-item-text-desc'>{prop.descripcion}</p>
             
@@ -88,7 +89,7 @@ function formatDate(date) {
          
           
           <div className='card-item-button-container'>
-          <label className='card-item-text-price one'>{prop.precio}</label>
+          <label className='card-item-text-price one'>{prop.precio}€</label>
           
           <label className='three'>@{prop.propietario}</label>
           <button className='card-item-button two' >Comprar</button>

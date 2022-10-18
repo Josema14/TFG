@@ -8,18 +8,19 @@ Login:
 https://codepen.io/hurick/details/Kyrvrj
 https://codepen.io/Mhmdhasan/pen/JbJzZv
 
-<Item
-        tipo={"Oficial"}
-        duracion={"22/12/00"}
-        fecha={"20/12/00"}
-        titulo={"Descanso en Tenerife"}
-        precio={"€ 200"}
-        pais={"Tenerife"}
-        cantidad={"20"}
-        person={"2"}
-        propietario={"TripTrades"}
-        imagen={
-          "https://media.traveler.es/photos/62dd8b4297500f54d427e2eb/4:3/w_3407,h_2555,c_limit/GettyImages-1316911520.jpg"
-        }
-        descripcion={"Descubre la isla de Tenerife, la más grande de las Canarias, con uno de sus mayores atractivos, el Teide y sus fantásticas playas."}
-      />
+{
+    "tipo" :"oficial",
+    "ubicacion": "Tenerife",
+    "fechaInicio": "06/30/2023",
+    "imagen":"https://media.traveler.es/photos/62dd8b4297500f54d427e2eb/4:3/w_3407,h_2555,c_limit/GettyImages-1316911520.jpg",
+    "fechaFinal": "07/02/2023",
+    "descripcion": "Descubre la isla de Tenerife, la más grande de las Canarias, con uno de sus mayores atractivos, el Teide y sus fantásticas playas.",
+    "personas": 2,
+    "precio" : 400,
+    "propietario": "TripTrades",
+    "titulo" : "Descanso en Tenerife",
+    "cantidad" : 50
+
+
+
+}
