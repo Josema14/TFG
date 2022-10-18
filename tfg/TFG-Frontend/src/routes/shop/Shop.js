@@ -19,6 +19,7 @@ import {
 import axios from '../../components/axios'
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 
+//import Item from "../../components/items/Item";
 import Item from "./Item.js";
 
 const Shop = () => {
@@ -28,7 +29,7 @@ const Shop = () => {
   const [page, setPage] = React.useState(1);
   const [items, setItems] = useState([]);
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
   const handleChange = (event, value) => {
     setPage(value);
   };
@@ -87,10 +88,29 @@ const Shop = () => {
 
         <div className="shopItem__container">
 
-        {items.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((item, i) => {
+        <div>
+        
+        {items.slice((page - 1) * itemsPerPage, (page - 1) * itemsPerPage + 3).map((item, i) => {
+          
+          console.log((page - 1) * itemsPerPage)
+          console.log((page - 1) * itemsPerPage + 3)
+          console.log((page - 1) * itemsPerPage + 3)
+          console.log((page) * itemsPerPage)
+          
              return <Item prop = {item} key={i}/>
        
         })}
+      </div>
+
+      <div>
+        
+        {items.slice((page - 1) * itemsPerPage + 3, (page) * itemsPerPage ).map((item, i) => {
+          
+             return <Item prop = {item} key={i}/>
+       
+        })}
+      </div>
+
 
           
         </div>

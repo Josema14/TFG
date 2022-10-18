@@ -7,7 +7,6 @@ import Shop from "./routes/shop/Shop";
 
 import Footer from "./routes/home/Footer/Footer";
 import Inventory from "./routes/Inventory/Inventory";
-import Item from "./components/items/Item";
 
 import {React, useEffect,useState} from 'react';
 export default function Links() {
@@ -34,21 +33,7 @@ export default function Links() {
     <BrowserRouter>
       {/*Renderiza la navbar*/}
       <Header logOut={logOut} />
-      <Item
-        tipo={"Oficial"}
-        duracion={"22/12/00"}
-        fecha={"20/12/00"}
-        titulo={"Descanso en Tenerife"}
-        precio={"€ 200"}
-        pais={"Tenerife"}
-        cantidad={"20"}
-        person={"2"}
-        propietario={"TripTrades"}
-        imagen={
-          "https://media.traveler.es/photos/62dd8b4297500f54d427e2eb/4:3/w_3407,h_2555,c_limit/GettyImages-1316911520.jpg"
-        }
-        descripcion={"Descubre la isla de Tenerife, la más grande de las Canarias, con uno de sus mayores atractivos, el Teide y sus fantásticas playas."}
-      />
+      
 
       
       {/* Rutas */}

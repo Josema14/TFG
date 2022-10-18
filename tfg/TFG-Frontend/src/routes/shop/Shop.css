@@ -1,7 +1,7 @@
 .shop{
     display: grid;
     place-items: center;
-    height: 90vh;
+    height: 100vh;
     background-color: #dadbd3;
     
 }
@@ -11,8 +11,8 @@
     background-color: #ededed;
     flex-direction: column;
     align-items: center;
-    height: 85vh;
-    width: 60vw;
+    height: 95vh;
+    width: 65vw;
     box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.75);
     justify-content: space-between;
     border-radius: 10px 10px 10px 10px;
@@ -34,8 +34,8 @@
 
 
 .shopItem__container{
-    height: 80%;
-    width: 80%;
+    height: 100%;
+    width: 100%;
     margin: 10px;
    
 }
