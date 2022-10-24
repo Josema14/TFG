@@ -172,6 +172,8 @@ app.post("/register", (request, response) => {
     })
   })
 
+
+
   //Recibir Items
   app.get("/inventory", (request, response) =>{
 
@@ -190,6 +192,56 @@ app.post("/register", (request, response) => {
       
      
     })
+  })
+
+  //Búsqueda
+  app.post("/search", (request, response) => {
+    
+    
+    let query = {}
+   
+    if (request.body.fechaInicial){
+      query.fechaInicio = {$gte: request.body.fechaInicial}
+      
+    }
+    if (request.body.fechaFinal){
+      query.fechaFinal = {$lte: request.body.fechaFinal}
+     
+    }
+
+    if(request.body.personas > 0){
+      query.personas = request.body.personas
+    }
+    if ((request.body.intercambio == false) && (request.body.oficial == false)){
+      query.tipo = "none"
+    }
+    else if(request.body.intercambio != request.body.oficial){
+      if (request.body.intercambio == true) query.tipo= "intercambio"
+      else query.tipo = "oficial"
+    }
+    
+    
+    console.log(query)
+
+    Item.find({
+      
+      $and: [
+        { $or: [{titulo: { $regex: '.*' + request.body.titulo + '.*' }}, {ubicacion: { $regex: '.*' + request.body.titulo + '.*' }}]},
+        query
+    ]
+      
+      
+    }
+
+
+
+    ).then((items) => {return response.status(200).send(items)})
+
+
+
+
+
+
   })
 
   ////Listener

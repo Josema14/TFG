@@ -7,15 +7,32 @@
   overflow: hidden;
   width: 300px;
   margin-left: 50px;
+  
   height: 355px;
+  transition: width 0.5s;
+  
+}
+.card-item-container:nth-child(1){
+  margin-left: 0px;
+}
+
+.card-item-container:hover{
+  transform: scale(1.15);
+  box-shadow: 5px 5px 15px rgba(144,84,100,0.6);
+  width: 500px;
+  
  
+  transition: width 0.5s;
 }
 
 
-
-.card-item-container:hover {
-    transform: scale(1.15);
-    box-shadow: 5px 5px 15px rgba(144,84,100,0.6);
+.card-item-container:hover:nth-child(1) {
+ 
+  margin-left: 50px;
+  }
+.card-item-container:hover:nth-child(3) {
+  margin-right: 50px;
+    
   }
 
   
@@ -104,6 +121,7 @@
 	background-image: linear-gradient( 135deg, #9f05ff69 10%, #fd5e086b 100%);
 	margin-right: 5px;
 	box-shadow: 0 3px 20px 0 #0000003b;
+  cursor: pointer;
 }
 
 .card-item-button:active {

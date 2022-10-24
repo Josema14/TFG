@@ -67,7 +67,7 @@ function formatDate(date) {
             </div>
             </div>
 
-            <div style={{"margin-left" : "5px"}}>
+            <div style={{"marginLeft" : "5px"}}>
 
             <p className='card-item-text-desc'>{prop.descripcion}</p>
             
