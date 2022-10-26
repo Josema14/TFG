@@ -2,14 +2,51 @@ import React from 'react'
 import "./Item.css"
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from "react-router-dom";
+
+import axios from '../../components/axios'
 export default function Card(props) {
 
+  const navigate = useNavigate();
 
   
 
-  const prop = props.prop;
+  const prop = props.prop.item;
+
+  
+  function comprar(){
+    //Obtenemos el usuario
+
+    let email = localStorage.getItem("email");
+  
+    //Si no está logueado nos reenvía al inicio de sesión.
+    if (email === "null"){
+      navigate("/login");
+      return
+    }
+
+    //Si está logueado enviamos el usuario a inventory y realizamos la petición al servidor
   
 
+    //Enviamos la petición con axios
+
+    axios.post('/purchase', {
+      email: email,
+      _id: prop._id,
+    }).then(() => {
+      navigate("/inventory");
+    }).catch( (e)=>{
+      alert("Ya tienes este paquete en tu inventario")
+    }
+
+    )
+
+    
+  }
+
+  function intercambiar(){
+
+  }
 
   
   
@@ -94,8 +131,9 @@ function formatDate(date) {
           </div>
           <div className='card-item-button-container'>
           <label className='three'>@{prop.propietario}</label>
-          <button className='card-item-button two' >Comprar</button>
+          {(props.prop.location === "inventory") ? <button className='card-item-button two' onClick={intercambiar} >Intercambiar</button> : <button className='card-item-button two' onClick={comprar} >Comprar</button>
           
+  }
           </div>
           
         </div>

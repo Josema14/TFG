@@ -1,99 +1,94 @@
-import React, {useState, useEffect} from 'react'
-import Item from '../shop/Item';
+import React, { useState,useEffect } from "react";
 import "../shop/Shop.css";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { IconButton } from "@mui/material";
+
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Checkbox,
   FormGroup,
   FormControlLabel,
   TextField,
-  Select,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Divider,
   Pagination
 } from "@mui/material";
 import axios from '../../components/axios'
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 
+//import Item from "../../components/items/Item";
+import SearchIcon from '@mui/icons-material/Search';
+import Item from "../shop/Item";
 
-export default function Inventory(props) {
-
-    const [items, setItems] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(null);
+const Inventory = () => {
+  //Variables de estado
+  const [selectedDate, setSelectedDate] = useState(null);
   const [duracion, setDuracion] = useState(null);
   const [page, setPage] = React.useState(1);
+  const [items, setItems] = useState([]);
+  const LOCATION = "inventory";
+  //Búsqueda
 
-
-  const itemsPerPage = 4;
+  
+  const itemsPerPage = 6;
   const handleChange = (event, value) => {
     setPage(value);
   };
 
-  useEffect(() => {
-     axios.get("/inventory",{
-        params: {
-            email:props.email
-          }
-        }).then(res => {
-      setItems(res.data.items)
-      console.log(res.data.items)
-      console.log(items)
+
   
-   
-    })
-  }, [])
+
+ 
+useEffect(() => {
+ 
+  axios.get("/inventory",{
+     params: {
+         email:localStorage.getItem("email")
+       }
+     }).then(res => {
+   setItems(res.data.items)
+  
+
+
+ })
+}, [])
+
+
+
 
   return (
     <div className="shop">
       <div className="shop__body">
         <div className="searchBar__container">
-          <form className="searchForm__container">
-            <div>
-              <TextField
-                id="outlined-basic"
-                label="Destino"
-                variant="outlined"
-              />
-
-              <IconButton>
-                <HighlightOffIcon />
-              </IconButton>
             </div>
-
-            <div>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Fecha de Inicio"
-                  value={selectedDate}
-                  onChange={(newValue) => {
-                    setSelectedDate(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-            </div>
-         
-
-            <FormGroup row={true}>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="Oficiales"
-              />
-              <FormControlLabel control={<Checkbox />} label="Intercambio" />
-            </FormGroup>
-          </form>
-        </div>
+       
 
         <div className="shopItem__container">
 
-        {items.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((item, i) => {
-             return <Item prop = {item} key={i}/>
+        <div className="shopItem__row">
+        
+        {items.slice((page - 1) * itemsPerPage, (page - 1) * itemsPerPage + 3).map((item, i) => {
+          
+          
+          let props = {
+            item : item,
+            location: LOCATION
+          }
+             return <Item prop = {props} key={i}/>
        
         })}
+      </div>
+
+      <div className="shopItem__row">
+        
+        {items.slice((page - 1) * itemsPerPage + 3, (page) * itemsPerPage ).map((item, i) => {
+          
+            let props = {
+              item : item,
+              location: LOCATION
+            }
+           
+             return <Item props = {props} key={i}/>
+       
+        })}
+      </div>
+
 
           
         </div>
@@ -114,5 +109,6 @@ export default function Inventory(props) {
         </div>
     </div>
   );
-  
-}
+};
+
+export default Inventory;

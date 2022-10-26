@@ -29,7 +29,7 @@ const Shop = () => {
   const [duracion, setDuracion] = useState(null);
   const [page, setPage] = React.useState(1);
   const [items, setItems] = useState([]);
-
+  const LOCATION = "shop";
   //Búsqueda
 
   const [form, setForm] = useState({
@@ -171,10 +171,13 @@ const Shop = () => {
         <div className="shopItem__row">
         
         {items.slice((page - 1) * itemsPerPage, (page - 1) * itemsPerPage + 3).map((item, i) => {
+           let props = {
+            item : item,
+            location: LOCATION
+          }
           
           
-          
-             return <Item prop = {item} key={i}/>
+             return <Item prop = {props} key={i}/>
        
         })}
       </div>
@@ -182,8 +185,11 @@ const Shop = () => {
       <div className="shopItem__row">
         
         {items.slice((page - 1) * itemsPerPage + 3, (page) * itemsPerPage ).map((item, i) => {
-          
-             return <Item prop = {item} key={i}/>
+             let props = {
+              item : item,
+              location: LOCATION
+            }
+             return <Item prop = {props} key={i}/>
        
         })}
       </div>
