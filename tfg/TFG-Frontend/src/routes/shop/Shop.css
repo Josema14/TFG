@@ -17,7 +17,7 @@
     justify-content: space-between;
     border-radius: 10px 10px 10px 10px;
     overflow: hidden;
-    
+   
 }
 
 .searchBar__container{
@@ -69,6 +69,7 @@ margin-left: 10px;
     justify-content: center;
     align-items: center;
     border-radius:0px 0px 10px 10px;
+
 
 }
 .shopItem__row{

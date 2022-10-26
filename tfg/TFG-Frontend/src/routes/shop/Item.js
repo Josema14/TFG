@@ -88,9 +88,11 @@ function formatDate(date) {
             
          
           
-          <div className='card-item-button-container'>
+          <div className='card-item-price-container' >
+        
           <label className='card-item-text-price one'>{prop.precio}€</label>
-          
+          </div>
+          <div className='card-item-button-container'>
           <label className='three'>@{prop.propietario}</label>
           <button className='card-item-button two' >Comprar</button>
           
