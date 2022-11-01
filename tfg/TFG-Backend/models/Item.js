@@ -59,6 +59,10 @@ const ItemSchema = new mongoose.Schema({
 
     cantidad: {
         type: Number,
+    },
+
+    original:{
+        type: mongoose.ObjectId
     }
 
 

@@ -42,6 +42,7 @@ useEffect(() => {
          email:localStorage.getItem("email")
        }
      }).then(res => {
+      console.log(res.data.items)
    setItems(res.data.items)
   
 
@@ -66,11 +67,9 @@ useEffect(() => {
         {items.slice((page - 1) * itemsPerPage, (page - 1) * itemsPerPage + 3).map((item, i) => {
           
           
-          let props = {
-            item : item,
-            location: LOCATION
-          }
-             return <Item prop = {props} key={i}/>
+        
+          
+             return <Item item = {item} location = {LOCATION} key={i}/>
        
         })}
       </div>
@@ -79,12 +78,10 @@ useEffect(() => {
         
         {items.slice((page - 1) * itemsPerPage + 3, (page) * itemsPerPage ).map((item, i) => {
           
-            let props = {
-              item : item,
-              location: LOCATION
-            }
+            
+            
            
-             return <Item props = {props} key={i}/>
+             return <Item item = {item} location = {LOCATION} key={i}/>
        
         })}
       </div>

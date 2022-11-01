@@ -54,7 +54,11 @@ const Shop = () => {
   
 
   useEffect(() => {
-    axios.get("/item").then(res => {
+    axios.get("/item",{
+    params: {
+      email:localStorage.getItem("email")
+    }})
+    .then(res => {
       setItems(res.data)
   
    
@@ -64,6 +68,11 @@ const Shop = () => {
   //Función para enviar los datos al servidor
   async function onSubmit(e) {
     e.preventDefault();
+    let email = localStorage.getItem("email");
+  
+    if (email === "null"){
+      email = "";
+    }
 
     //Petición post con axios
     axios.post('/search', {
@@ -73,11 +82,12 @@ const Shop = () => {
       personas: form.personas,
       intercambio: form.intercambio,
       oficial: form.oficial,
+      email
       
     }).then(function (response) {
       console.log(response.data)
       setItems(response.data)
-
+      setPage(1)
     }) }
 
 
@@ -171,13 +181,10 @@ const Shop = () => {
         <div className="shopItem__row">
         
         {items.slice((page - 1) * itemsPerPage, (page - 1) * itemsPerPage + 3).map((item, i) => {
-           let props = {
-            item : item,
-            location: LOCATION
-          }
           
           
-             return <Item prop = {props} key={i}/>
+          
+             return <Item item = {item} location = {LOCATION} key={i}/>
        
         })}
       </div>
@@ -185,11 +192,8 @@ const Shop = () => {
       <div className="shopItem__row">
         
         {items.slice((page - 1) * itemsPerPage + 3, (page) * itemsPerPage ).map((item, i) => {
-             let props = {
-              item : item,
-              location: LOCATION
-            }
-             return <Item prop = {props} key={i}/>
+             
+             return <Item item = {item} location = {LOCATION} key={i}/>
        
         })}
       </div>

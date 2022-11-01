@@ -9,7 +9,7 @@
   margin-left: 50px;
   
   height: 355px;
-  transition: width 0.5s;
+  
   display:flex;
   flex-direction: column;
   
@@ -24,7 +24,7 @@
   width: 500px;
   
  
-  transition: width 0.5s;
+
 }
 
 

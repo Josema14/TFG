@@ -152,10 +152,32 @@ app.post("/item", (request, response) => {
 //Repasar codigos de error
 //GetItems
 app.get("/item", (request, response) => {
-  Item.find({}).then((items) => {
+
+  let query = {};
+  if (request.query.email !== "null"){
+  
+    User.findOne({ email: request.query.email }).then(
+      (user) => {
+
+        query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
+        Item.find(query).then((items) => {
     return response.status(200).send(items);
-  });
-});
+  })
+})}
+
+  else{
+
+    Item.find({query}).then((items) => {
+      return response.status(200).send(items);
+    }
+
+  
+
+
+
+
+
+)}})
 
 
 //Compra
@@ -166,12 +188,13 @@ app.post("/purchase", (request, response) => {
     Item.findById(request.body._id)
       .then((item) => {
 
-        for(id in user.inventory){
+        console.log(user.inventory)
+        for(id of user.inventory){
           console.log(id)
-          if(id === _id){
+          if(id.equals(item._id) ){
             response.status(500).send({
               message: "Ya posee este objeto",
-              result,
+             
             });
             return;
           }
@@ -204,14 +227,16 @@ app.post("/purchase", (request, response) => {
 app.get("/inventory", (request, response) => {
   User.findOne({ email: request.query.email }).then((user) => {
     let items;
-    const ids = user.inventory;
+    let ids = user.inventory;
+   ids = ids.concat(user.trading);
+ 
     Item.find()
       .where("_id")
       .in(ids)
       .exec()
       .then((result) => {
         items = result;
-        console.log(result);
+     
         return response.status(200).send({
           items,
         });
@@ -219,43 +244,233 @@ app.get("/inventory", (request, response) => {
   });
 });
 
+app.post("/inventory", (request, response) => {
+  User.findOne({ email: request.body.email }).then((user) => {
+    let items;
+    let ids = user.inventory;
+    let precio = request.body.precio;
+ 
+    Item.find()
+      .where("_id")
+      .in(ids)
+      .exec()
+      .then((result) => {
+        items = result;
+        let itemsPrecio = []
+        for (item of items) {
+          if ((item.precio >= precio-100) && (item.precio <= precio +100) ) itemsPrecio.push(item)
+
+        }
+     
+        return response.status(200).send({
+          itemsPrecio,
+        });
+      });
+  });
+});
+
+
+
+
 //Búsqueda
 app.post("/search", (request, response) => {
   let query = {};
 
-  if (request.body.fechaInicial) {
-    query.fechaInicio = { $gte: request.body.fechaInicial };
-  }
-  if (request.body.fechaFinal) {
-    query.fechaFinal = { $lte: request.body.fechaFinal };
+  if (request.body.email !== ""){
+    User.findOne({ email: request.body.email }).then(
+      (user) => {
+
+        query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
+
+        if (request.body.fechaInicial) {
+          query.fechaInicio = { $gte: request.body.fechaInicial };
+        }
+        if (request.body.fechaFinal) {
+          query.fechaFinal = { $lte: request.body.fechaFinal };
+        }
+      
+        if (request.body.personas > 0) {
+          query.personas = request.body.personas;
+        }
+        if (request.body.intercambio == false && request.body.oficial == false) {
+          query.tipo = "none";
+        } else if (request.body.intercambio != request.body.oficial) {
+          if (request.body.intercambio == true) query.tipo = "Intercambio";
+          else query.tipo = "oficial";
+        }
+      
+        console.log(query);
+      
+        Item.find({
+          $and: [
+            {
+              $or: [
+                { titulo: { $regex: ".*" + request.body.titulo + ".*" } },
+                { ubicacion: { $regex: ".*" + request.body.titulo + ".*" } },
+              ],
+            },
+            query,
+          ],
+        }).then((items) => {
+          return response.status(200).send(items);
+        });
+
+      }
+    )
   }
 
-  if (request.body.personas > 0) {
-    query.personas = request.body.personas;
-  }
-  if (request.body.intercambio == false && request.body.oficial == false) {
-    query.tipo = "none";
-  } else if (request.body.intercambio != request.body.oficial) {
-    if (request.body.intercambio == true) query.tipo = "intercambio";
-    else query.tipo = "oficial";
-  }
-
-  console.log(query);
-
-  Item.find({
-    $and: [
-      {
-        $or: [
-          { titulo: { $regex: ".*" + request.body.titulo + ".*" } },
-          { ubicacion: { $regex: ".*" + request.body.titulo + ".*" } },
-        ],
-      },
-      query,
-    ],
-  }).then((items) => {
-    return response.status(200).send(items);
-  });
+ 
 });
+
+
+//setChange
+
+app.post("/setChange", (request, response) => {
+//Hacer códigos de error
+
+ User.findOne({ email: request.body.email }).then((user) => {
+
+  //Buscamos el item original
+  Item.findById(request.body._id).then((itemOriginal) => {
+
+    //Registramos el nuevo item
+
+    const item = new Item({
+      titulo: itemOriginal.titulo,
+      ubicacion: itemOriginal.ubicacion,
+      fechaInicio: itemOriginal.fechaInicio,
+      imagen: itemOriginal.imagen,
+      fechaFinal: itemOriginal.fechaFinal,
+      descripcion: itemOriginal.descripcion,
+      tipo: "Intercambio",
+      personas: itemOriginal.personas,
+      precio: itemOriginal.precio,
+      propietario: user.name,
+      cantidad: 1,
+      original: itemOriginal._id
+    });
+
+    //Guardamos el nuevo item
+
+    
+    item
+    .save()
+    .then((result) => {
+      console.log("creando item");
+      response.status(201).send({
+        message: "Item Created Successfully",
+        result,
+      });
+
+      //Se lo añadimos al usuario en la lista de intercambios
+      user.trading.unshift(item._id);
+
+      
+     
+    
+    for( var i = 0; i < user.inventory.length; i++){ 
+    
+        if ( user.inventory[i].equals(itemOriginal._id)  ) { 
+            console.log( user.inventory[i] + " " + itemOriginal._id)
+            user.inventory.splice(i,1); 
+        }
+      }
+    
+      user.save()
+
+    })
+    .catch((error) => {
+      //console.log("ERROR", error);
+      response.status(500).send({
+        message: "Error creating item",
+        error,
+      });
+    });
+
+
+
+
+
+  })
+  //Error item no existe
+  .catch()
+})
+//Error usuario no existe
+.catch()
+
+
+
+  
+});
+
+
+app.post("/removeChange", (request, response) => {
+  //Hacer códigos de error
+  
+   User.findOne({ email: request.body.email }).then((user) => {
+  
+    //Buscamos el item original
+    Item.findById(request.body._id).then((item) => {
+  
+      //Obtenemos el objeto original
+      itemOriginal = item.original;
+      itemAnterior = item._id;
+
+      //Lo borramos del usuario
+
+      for( var i = 0; i < user.trading.length; i++){ 
+    
+        if ( user.trading[i].equals( itemAnterior._id)  ) { 
+          
+            user.trading.splice(i,1); 
+        }
+      }
+      user.inventory.unshift(item.original)
+      user.save()
+   
+
+      
+      item
+      .delete()
+      .then((result) => {
+      response.status(201).send({
+        message: "Item Deleted Successfully",
+        result,
+      });
+  
+      })
+      .catch((error) => {
+        //console.log("ERROR", error);
+        response.status(500).send({
+          message: "Error deleting item",
+          error,
+        });
+      });
+
+      
+  
+  
+  
+  
+  
+    })
+    //Error item no existe
+    .catch()
+  })
+  //Error usuario no existe
+  .catch()
+  
+  
+  
+    
+  });
+  
+
+
+
+
+
+
 
 ////Listener
 app.listen(port, () => console.log(`Listening on localhost: ${port}`));

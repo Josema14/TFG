@@ -31,6 +31,12 @@ const UserSchema = new mongoose.Schema({
     inventory: {
         type: [mongoose.ObjectId]
 
+    },
+
+    
+    trading: {
+        type: [mongoose.ObjectId]
+
     }
 
    
