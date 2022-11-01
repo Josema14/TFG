@@ -12,6 +12,7 @@ const bodyParser = require("body-parser");
 //Importamos el schema
 const User = require("./models/User");
 const Item = require("./models/Item");
+const Trade = require("./models/Trade");
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -97,6 +98,7 @@ app.post("/login", (request, response) => {
           response.status(200).send({
             message: "Login Successful",
             email: user.email,
+            user: user.name,
             token,
           });
         })
@@ -149,6 +151,43 @@ app.post("/item", (request, response) => {
       });
     });
 });
+
+//new Item
+app.post("/tradeMessage", (request, response) => {
+  
+  let emailPropuesto = request.body.emailPropuesto
+  let _idAnfitrion = request.body._idAnfitrion
+  let _idPropuesto= request.body._idPropuesto
+  let usuarioAnfitrion = request.body.usuarioAnfitrion
+  const trade = new Trade({
+
+    propietario : usuarioAnfitrion,
+    comprador : emailPropuesto,
+    itemPropietario : _idAnfitrion,
+    itemComprador : _idPropuesto,
+
+
+  })
+
+  trade
+    .save()
+    .then((result) => {
+      console.log("creando trade");
+      response.status(201).send({
+        message: "Trade Created Successfully",
+        result,
+      });
+    })
+    .catch((error) => {
+      console.log("ERROR", error);
+      response.status(500).send({
+        message: "Error creating item",
+        error,
+      });
+    });
+});
+
+
 //Repasar codigos de error
 //GetItems
 app.get("/item", (request, response) => {

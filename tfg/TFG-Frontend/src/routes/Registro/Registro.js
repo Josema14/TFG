@@ -8,12 +8,11 @@ import KeyIcon from "@mui/icons-material/Key";
 import EmailIcon from "@mui/icons-material/Email";
 import PersonIcon from '@mui/icons-material/Person';
 import { Box } from "@mui/system";
-import axios from '../../components/axios'
-
+import {signUp} from '../../Controlador'
 
 function Registro() {
     
-    
+    //Estado del formulario
     const [form,setForm] = useState({
         user: "",
         email: "",
@@ -21,7 +20,7 @@ function Registro() {
         password2:"",
     })
 
-
+    //Estado de los errores
     const [showError,setError] = useState({
       showEmailError: false,
       showPasswordWrong: false,
@@ -56,29 +55,22 @@ function Registro() {
             } )
             return
           }
-      
-          //Petición post con axios
-          axios.post('/register', {
-            email: form.email,
-            user: form.user,
-            password: form.password
-          }) //Registro
-          .then(function (response) {
-      
-            console.log(response);
-           
-            navigate("/login");
-          }) //Manejo de errores
-          .catch(function (error) {
+          //Llamamos a la función del controlador para el registro
+          signUp(form.email,form.user,form.password).then(
+            (response) => {
+              //Cambiamos al login si la solicitud tuvo éxito
+              navigate("/login");
+            }
+          ).catch((error) => {
+            //Código de error
             console.log(error)
             if (error.response.status === 400){
               setError( {showEmailError: true,
                 showPasswordLengthError:false,
                 showPasswordWrong:false} )
             }
-
+          })
             
-          });      
         }
     
  

@@ -38,6 +38,31 @@ export default function Card(props) {
     setOpen(false);
     setProducto("");
   };
+
+  const handleIntercambio = () =>{
+
+    let email = localStorage.getItem("email");
+
+    //Enviamos la petición con axios
+
+    axios.post('/tradeMessage', {
+      emailPropuesto: email,
+      _idAnfitrion: item._id,
+      _idPropuesto : producto._id,
+      usuarioAnfitrion: item.propietario,
+    }).then(() => {
+      navigate("/");
+    }).catch( (e)=>{
+      
+    }
+
+    )
+
+
+
+    setOpen(false);
+
+  }
   
   const handleProduct = (event) => {
     setProducto(event.target.value);
@@ -247,7 +272,7 @@ function formatDate(date) {
         
         </Select>
          
-        <button className='card-item-button' style={{marginLeft:"100px"}} onClick={handleClose}>Aceptar</button>
+        <button className='card-item-button' style={{marginLeft:"100px"}} onClick={handleIntercambio}>Aceptar</button>
       </DialogActions>
          </div>
         </DialogContent>

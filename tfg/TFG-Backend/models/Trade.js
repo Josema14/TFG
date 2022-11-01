@@ -5,20 +5,20 @@ const mongoose = require("mongoose");
 const TradeSchema = new mongoose.Schema({
 
     propietario:{
-        type: mongoose.ObjectId,
-        required
+        type: String,
+        required: [true, "Introduzca un propietario"],
     },
     comprador:{
-        type: mongoose.ObjectId,
-        required
+        type: String,
+        required: [true, "Introduzca un comprador"],
     },
     itemPropietario:{
         type: mongoose.ObjectId,
-        required
+        required: [true, "Introduzca un itemPropietario"],
     },
     itemComprador:{
         type: mongoose.ObjectId,
-        required
+        required: [true, "Introduzca un itemComprador"], 
     }
 
 

@@ -6,8 +6,8 @@ import TextField from "@mui/material/TextField";
 import KeyIcon from "@mui/icons-material/Key";
 import EmailIcon from "@mui/icons-material/Email";
 import { Box } from "@mui/system";
-import axios from '../../components/axios'
 
+import {login} from '../../Controlador'
 function Login(props) {
 
   //Navegador para volver a la página principal
@@ -18,6 +18,7 @@ function Login(props) {
     password: "",
   });
 
+  //Estado para los errores
   const [showError,setError] = useState({
     showEmailError: false,
     showNoPasswordError: false,
@@ -44,20 +45,20 @@ function Login(props) {
       return
     }
 
-    //Petición post con axios
-    axios.post('/login', {
-      email: form.email,
-      password: form.password
-    }) //Inicio de sesión
-    .then(function (response) {
+    login(form.email, form.password).then ((response) => {
+
+      //Obtenemos el usuario 
       const user = response.data;
 
-      console.log(user);
-      localStorage.setItem("email",user.email)
+      //Preparamos el login
+      localStorage.setItem("email", user.email)
+      localStorage.setItem("user", user.user)
       props.logIn()
+      //Nos movemos a la página principal
       navigate("/");
-    }) //Manejo de errores
-    .catch(function (error) {
+    }).catch( (error) => {
+
+      //Códigos de error
       console.log(error)
       if (error.response.status === 404){
         setError( {showEmailError: true,
@@ -69,7 +70,9 @@ function Login(props) {
         showNoPasswordError: true,
         showPasswordLengthError:false} )
       }
-    });      
+
+    })
+   
   }
 
   return (

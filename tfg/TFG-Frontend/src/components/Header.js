@@ -20,7 +20,7 @@ const Header = (props) => {
    function isLoggedIn(){
     //Iniciamos sesión con el email y lo guardamos en el almacenamiento local.
    let email = localStorage.getItem("email")
-   console.log(email + "Logueado")
+
     if (email !== "null") return true
     else return false;
 
@@ -59,6 +59,7 @@ const Header = (props) => {
 
             <IconButton onClick={() => {
              localStorage.setItem("email","null")
+             localStorage.setItem("user","null")
              props.logOut()
              navigate("/")
             }} >
