@@ -1,6 +1,6 @@
 
 import React from 'react'
-import background from '../../../images/playa2.jpg'
+
 import "./Title.css"
 export default function Title() {
 

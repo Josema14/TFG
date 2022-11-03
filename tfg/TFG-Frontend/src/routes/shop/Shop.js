@@ -1,32 +1,24 @@
 import React, { useState,useEffect } from "react";
 import "./Shop.css";
 
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { IconButton } from "@mui/material";
+
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Checkbox,
   FormGroup,
   FormControlLabel,
   TextField,
-  Select,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Divider,
   Pagination
 } from "@mui/material";
-import axios from '../../components/axios'
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import Slider from '@mui/material/Slider';
 //import Item from "../../components/items/Item";
 import SearchIcon from '@mui/icons-material/Search';
 import Item from "./Item.js";
+import { getItems, search } from "../../Controlador";
 
 const Shop = () => {
   //Variables de estado
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [duracion, setDuracion] = useState(null);
+
   const [page, setPage] = React.useState(1);
   const [items, setItems] = useState([]);
   const LOCATION = "shop";
@@ -54,10 +46,8 @@ const Shop = () => {
   
 
   useEffect(() => {
-    axios.get("/item",{
-    params: {
-      email:localStorage.getItem("email")
-    }})
+    //Obtenemos los items 
+    getItems()
     .then(res => {
       setItems(res.data)
   
@@ -68,27 +58,16 @@ const Shop = () => {
   //Función para enviar los datos al servidor
   async function onSubmit(e) {
     e.preventDefault();
-    let email = localStorage.getItem("email");
-  
-    if (email === "null"){
-      email = "";
-    }
-
-    //Petición post con axios
-    axios.post('/search', {
-      titulo: form.titulo,
-      fechaInicial: form.fechaInicial,
-      fechaFinal: form.fechaFinal,
-      personas: form.personas,
-      intercambio: form.intercambio,
-      oficial: form.oficial,
-      email
-      
-    }).then(function (response) {
-      console.log(response.data)
+   
+    
+    search(form.titulo,form.fechaInicial,form.fechaFinal,form.personas,form.intercambio,form.oficial).then(function (response) {
+   
       setItems(response.data)
       setPage(1)
-    }) }
+    }) 
+  
+  
+  }
 
 
 

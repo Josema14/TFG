@@ -37,6 +37,10 @@ const UserSchema = new mongoose.Schema({
     trading: {
         type: [mongoose.ObjectId]
 
+    },
+
+    message:{
+        type: [mongoose.ObjectId]
     }
 
    

@@ -4,7 +4,7 @@ import Registro from "./routes/Registro/Registro";
 import Home from "./routes/home/home";
 import Header from "./components/Header";
 import Shop from "./routes/shop/Shop";
-
+import Trades from "./routes/Trades/Trades";
 import Footer from "./routes/home/Footer/Footer";
 import Inventory from "./routes/Inventory/Inventory";
 
@@ -64,6 +64,15 @@ export default function Links() {
           element={
             //Redireccionamos si no estamos logueados
             userLogged === true ? <Inventory/> : <Navigate to="/login" replace/>
+          }
+        />
+
+        <Route
+          exact
+          path="/trades"
+          element={
+            //Redireccionamos si no estamos logueados
+            userLogged === true ? <Trades/> : <Navigate to="/login" replace/>
           }
         />
       </Routes>

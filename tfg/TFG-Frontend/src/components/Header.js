@@ -38,7 +38,7 @@ const Header = (props) => {
           <StoreIcon />
         </IconButton>
         </Tooltip>
-        <IconButton></IconButton>
+      
       </div>
 
       {/* Grupo derecho de botones */}
@@ -46,7 +46,7 @@ const Header = (props) => {
         {isLoggedIn() === true ? (
           <>
            <Tooltip title="Mensajes">
-            <IconButton>
+            <IconButton component={Link} to="/trades">
               <MailIcon  />
             </IconButton>
             </Tooltip>

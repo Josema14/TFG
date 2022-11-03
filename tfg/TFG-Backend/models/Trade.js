@@ -1,5 +1,7 @@
 //Importamos mongoose
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
+const Item = require("./Item");
 
 //Creamos el schema
 const TradeSchema = new mongoose.Schema({
@@ -13,12 +15,24 @@ const TradeSchema = new mongoose.Schema({
         required: [true, "Introduzca un comprador"],
     },
     itemPropietario:{
-        type: mongoose.ObjectId,
+        type: Schema.Types.ObjectId,
+        ref: 'Items',
         required: [true, "Introduzca un itemPropietario"],
     },
     itemComprador:{
-        type: mongoose.ObjectId,
+        type: Schema.Types.ObjectId,
+        ref: 'Items',
         required: [true, "Introduzca un itemComprador"], 
+    },
+
+    fechaSolicitud: {
+        type: Date,
+        required: [true, "Introduzca una fecha inicial"]
+    },
+
+    estado: {
+        type: String,
+        required: [true, "Introduzca un estado"]
     }
 
 

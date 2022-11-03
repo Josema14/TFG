@@ -153,25 +153,34 @@ app.post("/item", (request, response) => {
 });
 
 //new Item
-app.post("/tradeMessage", (request, response) => {
+app.post("/proposeTrade", (request, response) => {
   
-  let emailPropuesto = request.body.emailPropuesto
+  let usuarioPropuesto = request.body.usuarioPropuesto
   let _idAnfitrion = request.body._idAnfitrion
   let _idPropuesto= request.body._idPropuesto
   let usuarioAnfitrion = request.body.usuarioAnfitrion
+
+  console.log(usuarioAnfitrion)
   const trade = new Trade({
 
     propietario : usuarioAnfitrion,
-    comprador : emailPropuesto,
+    comprador : usuarioPropuesto,
     itemPropietario : _idAnfitrion,
     itemComprador : _idPropuesto,
+    estado: "Pendiente",
+    fechaSolicitud: Date.now()
 
 
   })
 
+  
+
+  
+
   trade
     .save()
     .then((result) => {
+      getUsers(usuarioAnfitrion,usuarioPropuesto,trade._id)
       console.log("creando trade");
       response.status(201).send({
         message: "Trade Created Successfully",
@@ -186,6 +195,57 @@ app.post("/tradeMessage", (request, response) => {
       });
     });
 });
+
+
+app.get("/messages", (request, response) => {
+
+
+
+User.findOne({ name: request.query.name }).then(
+  (user) => {
+    
+    let ids = user.message;
+
+
+ 
+    Trade.find()
+    .where("_id")
+    .in(ids).populate('itemPropietario').populate('itemComprador')
+    .exec()
+    .then((result) => {
+      items = result;
+      return response.status(200).send({
+        items})
+
+      })
+    })
+
+
+})
+
+app.post("/acceptTrade", (request, response) => {
+
+  Trade.findById(request.body.idTrade).then((result) => {
+
+    let trade = result
+    Trade.updateMany({itemPropietario: trade.itemPropietario },{estado: "Cancelado"}).then(() => {
+      
+      acceptTrade(trade.propietario,trade.comprador,trade.itemPropietario,trade.itemComprador,trade)
+
+      return response.status(200).send();
+    }
+      
+    ).catch()
+
+    
+
+    
+
+
+  }
+    
+  )
+})
 
 
 //Repasar codigos de error
@@ -314,12 +374,15 @@ app.post("/inventory", (request, response) => {
 //Búsqueda
 app.post("/search", (request, response) => {
   let query = {};
+  
 
-  if (request.body.email !== ""){
+
     User.findOne({ email: request.body.email }).then(
       (user) => {
 
-        query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
+        if(user !== null)  query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
+
+       
 
         if (request.body.fechaInicial) {
           query.fechaInicio = { $gte: request.body.fechaInicial };
@@ -356,7 +419,7 @@ app.post("/search", (request, response) => {
 
       }
     )
-  }
+  
 
  
 });
@@ -364,7 +427,7 @@ app.post("/search", (request, response) => {
 
 //setChange
 
-app.post("/setChange", (request, response) => {
+app.post("/setTrade", (request, response) => {
 //Hacer códigos de error
 
  User.findOne({ email: request.body.email }).then((user) => {
@@ -443,7 +506,7 @@ app.post("/setChange", (request, response) => {
 });
 
 
-app.post("/removeChange", (request, response) => {
+app.post("/cancelTrade", (request, response) => {
   //Hacer códigos de error
   
    User.findOne({ email: request.body.email }).then((user) => {
@@ -503,6 +566,60 @@ app.post("/removeChange", (request, response) => {
   
     
   });
+
+  async function getUsers(user1,user2,_id){
+
+    let anfitrion = await User.findOne({ name: user1 })
+    let cliente = await User.findOne({name : user2})
+
+    anfitrion.message.unshift(_id);
+    cliente.message.unshift(_id);
+
+    anfitrion.save()
+    cliente.save()
+
+  }
+
+  async function acceptTrade(user1,user2,_id1,_id2,trade){
+    let anfitrion = await User.findOne({ name: user1 })
+    let cliente = await User.findOne({name : user2})
+    let itemAnfitrion = await Item.findById(_id1)
+    let itemOriginalID = itemAnfitrion.original
+
+    //Lo borramos del usuarioPropietario
+
+    for( let i = 0; i < anfitrion.trading.length; i++){ 
+    
+      console.log(anfitrion.trading[i] + " " + _id1)
+      if ( anfitrion.trading[i].equals( _id1)  ) { 
+          
+          anfitrion.trading.splice(i,1); 
+      }
+    }
+    console.log(anfitrion.trading)
+    anfitrion.inventory.unshift(_id2)
+
+    //Lo mismo con el cliente 
+
+    for( let i = 0; i < cliente.inventory.length; i++){ 
+    console.log(cliente.inventory + " " + _id2)
+      if ( cliente.inventory[i].equals( _id2)  ) { 
+        
+          cliente.inventory.splice(i,1); 
+      }
+    }
+
+    cliente.inventory.unshift(itemOriginalID)
+    trade.estado = "Aceptado"
+    trade.itemPropietario = itemOriginalID
+      
+   await trade.save()
+   await anfitrion.save()
+   await cliente.save()
+    
+  await Item.findByIdAndDelete(_id1)
+
+  }
   
 
 
