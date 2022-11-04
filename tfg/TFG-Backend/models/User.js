@@ -2,6 +2,7 @@
 //Importamos mongoose
 
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 const Item = require("./Item")
 //Creamos el schema
 const UserSchema = new mongoose.Schema({
@@ -29,18 +30,20 @@ const UserSchema = new mongoose.Schema({
     },
 
     inventory: {
-        type: [mongoose.ObjectId]
+        type: [Schema.Types.ObjectId],
+        ref: 'Items'
 
     },
 
     
     trading: {
-        type: [mongoose.ObjectId]
-
+        type: [Schema.Types.ObjectId],
+        ref: 'Items'
     },
 
     message:{
-        type: [mongoose.ObjectId]
+        type: [Schema.Types.ObjectId],
+        ref: 'Trade'
     }
 
    

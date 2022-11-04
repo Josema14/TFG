@@ -14,28 +14,15 @@
   flex-direction: column;
   
 }
-.card-item-container:nth-child(1){
-  margin-left: 0px;
-}
 
 .card-item-container:hover{
-  transform: scale(1.15);
+
   box-shadow: 5px 5px 15px rgba(144,84,100,0.6);
-  width: 500px;
-  
+
  
 
 }
 
-
-.card-item-container:hover:nth-child(1) {
- 
-  margin-left: 50px;
-  }
-.card-item-container:hover:nth-child(3) {
-  margin-right: 50px;
-    
-  }
 
   
  

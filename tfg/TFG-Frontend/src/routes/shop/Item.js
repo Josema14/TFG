@@ -91,6 +91,51 @@ export default function Card(props) {
       });
   }
 
+  function MostrarBotones(){
+  
+    if(LOCATION === "Consulta"){
+      return(<div></div>)
+    }
+
+    else if(LOCATION === "inventory"){
+
+     return ((item.tipo === "Intercambio") ? (
+      <div>
+        <button
+          className="card-item-button two"
+          onClick={cancelarIntercambio}
+        >
+          Cancelar intercambio
+        </button>
+        </div>
+      ) : (
+        <div>
+        <button className="card-item-button two" onClick={setIntercambio}>
+          Intercambiar
+        </button>
+        </div>
+      ))
+    }
+
+    else {
+
+     return (item.tipo === "Intercambio" ? (
+      <div>
+        <button className="card-item-button two" onClick={intercambiar}>
+          Intercambiar
+        </button>
+        </div>
+      ) : (
+        <div>
+        <button className="card-item-button two" onClick={comprar}>
+          Comprar
+        </button>
+        </div>
+      ))
+
+    }
+  }
+
   function cancelarIntercambio() {
     cancelTrade(item._id)
       .then(() => {
@@ -113,8 +158,9 @@ export default function Card(props) {
 
     itemsByPrice(item.precio)
       .then((res) => {
-        let newArray = [...res.data.itemsPrecio];
-
+        console.log(res)
+        let newArray = [...res.data.items];
+        
         setProducto(newArray[0]);
         setInventario(newArray);
 
@@ -123,7 +169,7 @@ export default function Card(props) {
       })
       .catch((e) => {
         //Ha surgido un error
-        alert("El intercambio no se ha podido cancelar " + e.message);
+        alert("Ha surgido un error " + e.message);
       });
   }
 
@@ -182,8 +228,8 @@ export default function Card(props) {
               marginTop: "10px",
             }}
           >
-            <Card item={producto} location={LOCATION} />
-            <Card item={item} location={LOCATION} />
+            <Card item={producto} location={"Consulta"} />
+            <Card item={item} location={"Consulta"} />
           </div>
           <div
             style={{
@@ -279,28 +325,7 @@ export default function Card(props) {
         <div className="card-item-button-container">
           <label className="three">@{item.propietario}</label>
 
-          {LOCATION !== "inventory" ? (
-            item.tipo === "Intercambio" ? (
-              <button className="card-item-button two" onClick={intercambiar}>
-                Intercambiar
-              </button>
-            ) : (
-              <button className="card-item-button two" onClick={comprar}>
-                Comprar
-              </button>
-            )
-          ) : item.tipo === "Intercambio" ? (
-            <button
-              className="card-item-button two"
-              onClick={cancelarIntercambio}
-            >
-              Cancelar intercambio
-            </button>
-          ) : (
-            <button className="card-item-button two" onClick={setIntercambio}>
-              Intercambiar
-            </button>
-          )}
+          {<MostrarBotones/>}
         </div>
       </div>
     </div>

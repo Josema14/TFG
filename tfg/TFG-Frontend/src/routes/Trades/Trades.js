@@ -8,7 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Card from "../shop/Item";
-import { aceptarIntercambio,getMessages, getUsuario } from "../../Controlador";
+import { aceptarIntercambio, rechazarIntercambio,getMessages, getUsuario } from "../../Controlador";
 import "./Trades.css"
 const Trades = () => {
 
@@ -39,7 +39,8 @@ const Trades = () => {
   }
   
 
-  const rechazarIntercambio = () => {
+  const reIntercambio = () => {
+   
     rechazarIntercambio(tradeSeleccionado).then(
       navigate(0)
     ).catch(
@@ -77,7 +78,7 @@ const Trades = () => {
           let filas = [];
          
           
-          for(let message of data.items){
+          for(let message of data.result){
           console.log(message)
             let item = {
               id: message._id,
@@ -247,10 +248,23 @@ const Trades = () => {
             }}
           >
         <DialogActions>
+
+        {tradeSeleccionado.estado !== "Pendiente" ? (
+          <div>
+             <button
+             className="card-item-button"
+             style={{ marginRight: "100px" }}
+             onClick={handleClose}
+           >
+             Regresar
+           </button>
+           </div>
+            ) : tradeSeleccionado.propietario === getUsuario() ? (
+              <div>
               <button
                 className="card-item-button"
                 style={{ marginRight: "100px" }}
-                onClick={handleClose}
+                onClick={reIntercambio}
               >
                 Cancelar
               </button>
@@ -263,6 +277,30 @@ const Trades = () => {
               >
                 Aceptar
               </button>
+              </div>
+            ) : (<div>
+
+                <button
+                className="card-item-button"
+                style={{ marginRight: "100px" }}
+                onClick={handleClose}
+              >
+                Regresar
+              </button>
+              
+
+              <button
+                className="card-item-button"
+                style={{ marginLeft: "100px" }}
+                onClick={reIntercambio}
+              >
+                Cancelar Intercambio
+              </button>
+
+
+            </div>)
+          }
+              
             </DialogActions>
             </div>
       </Dialog>

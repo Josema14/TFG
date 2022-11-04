@@ -23,7 +23,7 @@ export function login(email, password) {
 export function getItems() {
   return axios.get("/item", {
     params: {
-      email: localStorage.getItem("email"),
+      name: getUsuario(),
     },
   });
 }
@@ -54,7 +54,7 @@ export function getInventory(){
 
   return  axios.get("/inventory",{
     params: {
-        email:localStorage.getItem("email")
+        name: getUsuario()
       }
     })
 }
@@ -98,10 +98,11 @@ export function proposeTrade(_idAnfitrion,_idPropuesto,host){
 
 export function itemsByPrice(price){
   return axios
-      .post("/inventory", {
-        email: getEmail(),
-        precio: price,
-      })
+      .get("/inventoryByPrice", {
+        params: {
+          name: getUsuario(),
+          price: price,
+        }})
 
 }
 
@@ -126,6 +127,7 @@ export function aceptarIntercambio(trade){
 
 export function rechazarIntercambio(trade){
 
+  console.log(trade)
   return axios.post("/refuseTrade", {
       idTrade : trade._id
   })

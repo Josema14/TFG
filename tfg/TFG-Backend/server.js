@@ -13,6 +13,13 @@ const bodyParser = require("body-parser");
 const User = require("./models/User");
 const Item = require("./models/Item");
 const Trade = require("./models/Trade");
+
+//Servicios
+
+const itemService = require("./servicioItem");
+const userService = require("./servicioUser");
+const tradeService = require("./servicioTrade");
+const { get } = require("mongoose");
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -120,22 +127,10 @@ app.post("/login", (request, response) => {
 
 //new Item
 app.post("/item", (request, response) => {
-  const item = new Item({
-    titulo: request.body.titulo,
-    ubicacion: request.body.ubicacion,
-    fechaInicio: request.body.fechaInicio,
-    imagen: request.body.imagen,
-    fechaFinal: request.body.fechaFinal,
-    descripcion: request.body.descripcion,
-    tipo: request.body.tipo,
-    personas: request.body.personas,
-    precio: request.body.precio,
-    propietario: request.body.propietario,
-    cantidad: request.body.cantidad,
-  });
+  //Comprobar bad request
 
-  item
-    .save()
+  itemService
+    .newItem(request.body)
     .then((result) => {
       console.log("creando item");
       response.status(201).send({
@@ -144,7 +139,6 @@ app.post("/item", (request, response) => {
       });
     })
     .catch((error) => {
-      console.log("ERROR", error);
       response.status(500).send({
         message: "Error creating item",
         error,
@@ -152,153 +146,179 @@ app.post("/item", (request, response) => {
     });
 });
 
-//new Item
-app.post("/proposeTrade", (request, response) => {
-  
-  let usuarioPropuesto = request.body.usuarioPropuesto
-  let _idAnfitrion = request.body._idAnfitrion
-  let _idPropuesto= request.body._idPropuesto
-  let usuarioAnfitrion = request.body.usuarioAnfitrion
+//GetItems
+app.get("/item", (request, response) => {
+  itemService
+    .getItems(request.query.name)
+    .then((items) => {
+      response.status(200).send(items);
+    })
+    .catch((e) => {
+      //Solo puede ocurrir un error de servidor
+      response.status(500).send({
+        message: "Internal Server Error",
+      });
+    });
+});
 
-  console.log(usuarioAnfitrion)
-  const trade = new Trade({
-
-    propietario : usuarioAnfitrion,
-    comprador : usuarioPropuesto,
-    itemPropietario : _idAnfitrion,
-    itemComprador : _idPropuesto,
-    estado: "Pendiente",
-    fechaSolicitud: Date.now()
-
-
-  })
-
-  
-
-  
-
-  trade
-    .save()
-    .then((result) => {
-      getUsers(usuarioAnfitrion,usuarioPropuesto,trade._id)
-      console.log("creando trade");
-      response.status(201).send({
-        message: "Trade Created Successfully",
-        result,
+//Recibir inventario
+app.get("/inventory", (request, response) => {
+  userService
+    .getUsuarioPopulated(request.query.name)
+    .then((resultado) => {
+      let items = itemService.getInventory(resultado);
+      return response.status(200).send({
+        items,
       });
     })
     .catch((error) => {
       console.log("ERROR", error);
       response.status(500).send({
-        message: "Error creating item",
+        message: "Internal Server Error",
         error,
       });
     });
 });
 
+//getInventoryByMoneyandTime
+//Comprobar que hace bien la fecha
+app.get("/inventoryByPrice", (request, response) => {
+  userService.getUsuarioPopulated(request.query.name).then((result) => {
+    console.log(request.query.name + " " + request.query.price);
+    let items = itemService.getValidInventory(
+      result.inventory,
+      request.query.price
+    );
+    return response.status(200).send({
+      items,
+    });
+  });
+});
 
+//Mensajes de intercambio
 app.get("/messages", (request, response) => {
-
-
-
-User.findOne({ name: request.query.name }).then(
-  (user) => {
-    
-    let ids = user.message;
-
-
- 
-    Trade.find()
-    .where("_id")
-    .in(ids).populate('itemPropietario').populate('itemComprador')
-    .exec()
+  userService
+    .getUsuarioByName(request.query.name)
     .then((result) => {
-      items = result;
-      return response.status(200).send({
-        items})
-
-      })
+      tradeService
+        .getMessages(result.message)
+        .then((result) => {
+          console.log(result);
+          return response.status(200).send({
+            result,
+          });
+        })
+        .catch((error) => {
+          //Fallo con los mensajes
+          console.log("ERROR", error);
+          return response.status(500).send({
+            message: "Internal Server Error",
+            error,
+          });
+        });
     })
+    .catch((error) => {
+      //Fallo con el usuario
 
+      console.log("ERROR", error);
+      return response.status(404).send({
+        message: "User Not Found",
+        error,
+      });
+    });
+});
 
-})
+//proponerTrade
+app.post("/proposeTrade", (request, response) => {
+  
+  tradeService.newTrade(request.body.usuarioAnfitrion,request.body._idAnfitrion,request.body.usuarioPropuesto,   request.body._idPropuesto)
+  .then( (result) => {
+    userService.saveTradeUsers(result.propietario,result.comprador,result._id)
+    return response.status(200).send();
+  }).catch( (error) => {
+    //Error interno, si ha llegado hasta aquí no puede ser otro fallo
+    console.log("ERROR", error);
+      return response.status(500).send({
+        message: "Internal Server Error",
+        error,
+      });
+  })
+
+  
+});
 
 app.post("/acceptTrade", (request, response) => {
 
-  Trade.findById(request.body.idTrade).then((result) => {
 
-    let trade = result
-    Trade.updateMany({itemPropietario: trade.itemPropietario },{estado: "Cancelado"}).then(() => {
-      
-      acceptTrade(trade.propietario,trade.comprador,trade.itemPropietario,trade.itemComprador,trade)
+  tradeService.getTrade(request.body.idTrade).then(
+    (trade) => {
+      tradeService.cancelTradesByProduct(trade.itemPropietario).then(
+        () => {
+          tradeService.acceptTrade(trade)
+        }
+      ).catch( (error) => {
 
-      return response.status(200).send();
+      })
     }
-      
-    ).catch()
+  ).catch( (error) => {
 
-    
-
-    
-
-
-  }
-    
-  )
-})
-
-
-//Repasar codigos de error
-//GetItems
-app.get("/item", (request, response) => {
-
-  let query = {};
-  if (request.query.email !== "null"){
-  
-    User.findOne({ email: request.query.email }).then(
-      (user) => {
-
-        query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
-        Item.find(query).then((items) => {
-    return response.status(200).send(items);
   })
-})}
-
-  else{
-
-    Item.find({query}).then((items) => {
-      return response.status(200).send(items);
-    }
-
-  
 
 
 
+/*
+  Trade.findById(request.body.idTrade).then((result) => {
+    let trade = result;
+    Trade.updateMany(
+      { itemPropietario: trade.itemPropietario },
+      { estado: "Cancelado" }
+    )
+      .then(() => {
+        acceptTrade(
+          trade.propietario,
+          trade.comprador,
+          trade.itemPropietario,
+          trade.itemComprador,
+          trade
+        );
 
+        return response.status(200).send();
+      })
+      .catch();
+  });*/
+});
 
-)}})
+app.post("/refuseTrade", (request, response) => {
+  console.log(request.body.idTrade);
+  Trade.findById(request.body.idTrade)
+    .then((result) => {
+      console.log(result);
+      let trade = result;
 
+      trade.estado = "Cancelado";
+      trade.save().then(() => {
+        return response.status(200).send();
+      });
+    })
+    .catch();
+});
 
 //Compra
 app.post("/purchase", (request, response) => {
-
-  console.log(request.body)
+  console.log(request.body);
   User.findOne({ email: request.body.email }).then((user) => {
     Item.findById(request.body._id)
       .then((item) => {
-
-        console.log(user.inventory)
-        for(id of user.inventory){
-          console.log(id)
-          if(id.equals(item._id) ){
+        console.log(user.inventory);
+        for (id of user.inventory) {
+          console.log(id);
+          if (id.equals(item._id)) {
             response.status(500).send({
               message: "Ya posee este objeto",
-             
             });
             return;
           }
         }
-  
 
         item.cantidad = item.cantidad - 1;
         item.save();
@@ -322,311 +342,197 @@ app.post("/purchase", (request, response) => {
   });
 });
 
-//Recibir Items
-app.get("/inventory", (request, response) => {
-  User.findOne({ email: request.query.email }).then((user) => {
-    let items;
-    let ids = user.inventory;
-   ids = ids.concat(user.trading);
- 
-    Item.find()
-      .where("_id")
-      .in(ids)
-      .exec()
-      .then((result) => {
-        items = result;
-     
-        return response.status(200).send({
-          items,
-        });
-      });
-  });
-});
-
-app.post("/inventory", (request, response) => {
-  User.findOne({ email: request.body.email }).then((user) => {
-    let items;
-    let ids = user.inventory;
-    let precio = request.body.precio;
- 
-    Item.find()
-      .where("_id")
-      .in(ids)
-      .exec()
-      .then((result) => {
-        items = result;
-        let itemsPrecio = []
-        for (item of items) {
-          if ((item.precio >= precio-100) && (item.precio <= precio +100) ) itemsPrecio.push(item)
-
-        }
-     
-        return response.status(200).send({
-          itemsPrecio,
-        });
-      });
-  });
-});
-
-
-
-
 //Búsqueda
 app.post("/search", (request, response) => {
   let query = {};
-  
 
+  User.findOne({ email: request.body.email }).then((user) => {
+    if (user !== null)
+      query.propietario = { $regex: "^((?!" + user.name + ").)*$" };
 
-    User.findOne({ email: request.body.email }).then(
-      (user) => {
+    if (request.body.fechaInicial) {
+      query.fechaInicio = { $gte: request.body.fechaInicial };
+    }
+    if (request.body.fechaFinal) {
+      query.fechaFinal = { $lte: request.body.fechaFinal };
+    }
 
-        if(user !== null)  query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
+    if (request.body.personas > 0) {
+      query.personas = request.body.personas;
+    }
+    if (request.body.intercambio == false && request.body.oficial == false) {
+      query.tipo = "none";
+    } else if (request.body.intercambio != request.body.oficial) {
+      if (request.body.intercambio == true) query.tipo = "Intercambio";
+      else query.tipo = "oficial";
+    }
 
-       
+    console.log(query);
 
-        if (request.body.fechaInicial) {
-          query.fechaInicio = { $gte: request.body.fechaInicial };
-        }
-        if (request.body.fechaFinal) {
-          query.fechaFinal = { $lte: request.body.fechaFinal };
-        }
-      
-        if (request.body.personas > 0) {
-          query.personas = request.body.personas;
-        }
-        if (request.body.intercambio == false && request.body.oficial == false) {
-          query.tipo = "none";
-        } else if (request.body.intercambio != request.body.oficial) {
-          if (request.body.intercambio == true) query.tipo = "Intercambio";
-          else query.tipo = "oficial";
-        }
-      
-        console.log(query);
-      
-        Item.find({
-          $and: [
-            {
-              $or: [
-                { titulo: { $regex: ".*" + request.body.titulo + ".*" } },
-                { ubicacion: { $regex: ".*" + request.body.titulo + ".*" } },
-              ],
-            },
-            query,
+    Item.find({
+      $and: [
+        {
+          $or: [
+            { titulo: { $regex: ".*" + request.body.titulo + ".*" } },
+            { ubicacion: { $regex: ".*" + request.body.titulo + ".*" } },
           ],
-        }).then((items) => {
-          return response.status(200).send(items);
-        });
-
-      }
-    )
-  
-
- 
+        },
+        query,
+      ],
+    }).then((items) => {
+      return response.status(200).send(items);
+    });
+  });
 });
-
 
 //setChange
 
 app.post("/setTrade", (request, response) => {
-//Hacer códigos de error
+  //Hacer códigos de error
 
- User.findOne({ email: request.body.email }).then((user) => {
+  User.findOne({ email: request.body.email })
+    .then((user) => {
+      //Buscamos el item original
+      Item.findById(request.body._id)
+        .then((itemOriginal) => {
+          //Registramos el nuevo item
 
-  //Buscamos el item original
-  Item.findById(request.body._id).then((itemOriginal) => {
+          const item = new Item({
+            titulo: itemOriginal.titulo,
+            ubicacion: itemOriginal.ubicacion,
+            fechaInicio: itemOriginal.fechaInicio,
+            imagen: itemOriginal.imagen,
+            fechaFinal: itemOriginal.fechaFinal,
+            descripcion: itemOriginal.descripcion,
+            tipo: "Intercambio",
+            personas: itemOriginal.personas,
+            precio: itemOriginal.precio,
+            propietario: user.name,
+            cantidad: 1,
+            original: itemOriginal._id,
+          });
 
-    //Registramos el nuevo item
+          //Guardamos el nuevo item
 
-    const item = new Item({
-      titulo: itemOriginal.titulo,
-      ubicacion: itemOriginal.ubicacion,
-      fechaInicio: itemOriginal.fechaInicio,
-      imagen: itemOriginal.imagen,
-      fechaFinal: itemOriginal.fechaFinal,
-      descripcion: itemOriginal.descripcion,
-      tipo: "Intercambio",
-      personas: itemOriginal.personas,
-      precio: itemOriginal.precio,
-      propietario: user.name,
-      cantidad: 1,
-      original: itemOriginal._id
-    });
+          item
+            .save()
+            .then((result) => {
+              console.log("creando item");
+              response.status(201).send({
+                message: "Item Created Successfully",
+                result,
+              });
 
-    //Guardamos el nuevo item
+              //Se lo añadimos al usuario en la lista de intercambios
+              user.trading.unshift(item._id);
 
-    
-    item
-    .save()
-    .then((result) => {
-      console.log("creando item");
-      response.status(201).send({
-        message: "Item Created Successfully",
-        result,
-      });
+              for (var i = 0; i < user.inventory.length; i++) {
+                if (user.inventory[i].equals(itemOriginal._id)) {
+                  console.log(user.inventory[i] + " " + itemOriginal._id);
+                  user.inventory.splice(i, 1);
+                }
+              }
 
-      //Se lo añadimos al usuario en la lista de intercambios
-      user.trading.unshift(item._id);
-
-      
-     
-    
-    for( var i = 0; i < user.inventory.length; i++){ 
-    
-        if ( user.inventory[i].equals(itemOriginal._id)  ) { 
-            console.log( user.inventory[i] + " " + itemOriginal._id)
-            user.inventory.splice(i,1); 
-        }
-      }
-    
-      user.save()
-
+              user.save();
+            })
+            .catch((error) => {
+              //console.log("ERROR", error);
+              response.status(500).send({
+                message: "Error creating item",
+                error,
+              });
+            });
+        })
+        //Error item no existe
+        .catch();
     })
-    .catch((error) => {
-      //console.log("ERROR", error);
-      response.status(500).send({
-        message: "Error creating item",
-        error,
-      });
-    });
-
-
-
-
-
-  })
-  //Error item no existe
-  .catch()
-})
-//Error usuario no existe
-.catch()
-
-
-
-  
+    //Error usuario no existe
+    .catch();
 });
-
 
 app.post("/cancelTrade", (request, response) => {
   //Hacer códigos de error
-  
-   User.findOne({ email: request.body.email }).then((user) => {
-  
-    //Buscamos el item original
-    Item.findById(request.body._id).then((item) => {
-  
-      //Obtenemos el objeto original
-      itemOriginal = item.original;
-      itemAnterior = item._id;
 
-      //Lo borramos del usuario
+  User.findOne({ email: request.body.email })
+    .then((user) => {
+      //Buscamos el item original
+      Item.findById(request.body._id)
+        .then((item) => {
+          //Obtenemos el objeto original
+          itemOriginal = item.original;
+          itemAnterior = item._id;
 
-      for( var i = 0; i < user.trading.length; i++){ 
-    
-        if ( user.trading[i].equals( itemAnterior._id)  ) { 
-          
-            user.trading.splice(i,1); 
-        }
-      }
-      user.inventory.unshift(item.original)
-      user.save()
-   
+          //Lo borramos del usuario
 
-      
-      item
-      .delete()
-      .then((result) => {
-      response.status(201).send({
-        message: "Item Deleted Successfully",
-        result,
-      });
-  
-      })
-      .catch((error) => {
-        //console.log("ERROR", error);
-        response.status(500).send({
-          message: "Error deleting item",
-          error,
-        });
-      });
+          for (var i = 0; i < user.trading.length; i++) {
+            if (user.trading[i].equals(itemAnterior._id)) {
+              user.trading.splice(i, 1);
+            }
+          }
+          user.inventory.unshift(item.original);
+          user.save();
 
-      
-  
-  
-  
-  
-  
+          item
+            .delete()
+            .then((result) => {
+              response.status(201).send({
+                message: "Item Deleted Successfully",
+                result,
+              });
+            })
+            .catch((error) => {
+              //console.log("ERROR", error);
+              response.status(500).send({
+                message: "Error deleting item",
+                error,
+              });
+            });
+        })
+        //Error item no existe
+        .catch();
     })
-    //Error item no existe
-    .catch()
-  })
-  //Error usuario no existe
-  .catch()
-  
-  
-  
-    
-  });
+    //Error usuario no existe
+    .catch();
+});
 
-  async function getUsers(user1,user2,_id){
 
-    let anfitrion = await User.findOne({ name: user1 })
-    let cliente = await User.findOne({name : user2})
 
-    anfitrion.message.unshift(_id);
-    cliente.message.unshift(_id);
+async function acceptTrade(user1, user2, _id1, _id2, trade) {
+  let anfitrion = await User.findOne({ name: user1 });
+  let cliente = await User.findOne({ name: user2 });
+  let itemAnfitrion = await Item.findById(_id1);
+  let itemOriginalID = itemAnfitrion.original;
 
-    anfitrion.save()
-    cliente.save()
+  //Lo borramos del usuarioPropietario
 
+  for (let i = 0; i < anfitrion.trading.length; i++) {
+    console.log(anfitrion.trading[i] + " " + _id1);
+    if (anfitrion.trading[i].equals(_id1)) {
+      anfitrion.trading.splice(i, 1);
+    }
+  }
+  console.log(anfitrion.trading);
+  anfitrion.inventory.unshift(_id2);
+
+  //Lo mismo con el cliente
+
+  for (let i = 0; i < cliente.inventory.length; i++) {
+    console.log(cliente.inventory + " " + _id2);
+    if (cliente.inventory[i].equals(_id2)) {
+      cliente.inventory.splice(i, 1);
+    }
   }
 
-  async function acceptTrade(user1,user2,_id1,_id2,trade){
-    let anfitrion = await User.findOne({ name: user1 })
-    let cliente = await User.findOne({name : user2})
-    let itemAnfitrion = await Item.findById(_id1)
-    let itemOriginalID = itemAnfitrion.original
+  cliente.inventory.unshift(itemOriginalID);
+  trade.estado = "Aceptado";
+  trade.itemPropietario = itemOriginalID;
 
-    //Lo borramos del usuarioPropietario
+  await trade.save();
+  await anfitrion.save();
+  await cliente.save();
 
-    for( let i = 0; i < anfitrion.trading.length; i++){ 
-    
-      console.log(anfitrion.trading[i] + " " + _id1)
-      if ( anfitrion.trading[i].equals( _id1)  ) { 
-          
-          anfitrion.trading.splice(i,1); 
-      }
-    }
-    console.log(anfitrion.trading)
-    anfitrion.inventory.unshift(_id2)
-
-    //Lo mismo con el cliente 
-
-    for( let i = 0; i < cliente.inventory.length; i++){ 
-    console.log(cliente.inventory + " " + _id2)
-      if ( cliente.inventory[i].equals( _id2)  ) { 
-        
-          cliente.inventory.splice(i,1); 
-      }
-    }
-
-    cliente.inventory.unshift(itemOriginalID)
-    trade.estado = "Aceptado"
-    trade.itemPropietario = itemOriginalID
-      
-   await trade.save()
-   await anfitrion.save()
-   await cliente.save()
-    
-  await Item.findByIdAndDelete(_id1)
-
-  }
-  
-
-
-
-
-
-
+  await Item.findByIdAndDelete(_id1);
+}
 
 ////Listener
 app.listen(port, () => console.log(`Listening on localhost: ${port}`));

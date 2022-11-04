@@ -40,25 +40,30 @@ const ItemSchema = new mongoose.Schema({
     imagen: {
         type: String,
         unique:false,
+        required: [true, "Introduzca una imagen"],
     },
 
     personas: {
         type: Number,
         unique: false,
+        required: [true, "Introduzca el número de personas"],
     },
 
     precio: {
         type: Number,
         unique: false,
+        required: [true, "Introduzca un precio"],
     },
 
     propietario: {
         type: String,
         unique:false,
+        required: [true, "Introduzca un propietario"],
     },
 
     cantidad: {
         type: Number,
+        required: [true, "Introduzca una cantidad"],
     },
 
     original:{

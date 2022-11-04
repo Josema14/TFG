@@ -1,0 +1,67 @@
+let query = {};
+  if (request.query.email !== "null"){
+  
+    User.findOne({ email: request.query.email }).then(
+      (user) => {
+
+        query.propietario = {$regex: "^((?!" + user.name + ").)*$"} ;
+        Item.find(query).then((items) => {
+    return response.status(200).send(items);
+  })
+})}
+
+  else{
+
+    Item.find({query}).then((items) => {
+      return response.status(200).send(items);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let usuarioPropuesto = request.body.usuarioPropuesto;
+  let _idAnfitrion = request.body._idAnfitrion;
+  let _idPropuesto = request.body._idPropuesto;
+  let usuarioAnfitrion = request.body.usuarioAnfitrion;
+
+  console.log(usuarioAnfitrion);
+  const trade = new Trade({
+    propietario: usuarioAnfitrion,
+    comprador: usuarioPropuesto,
+    itemPropietario: _idAnfitrion,
+    itemComprador: _idPropuesto,
+    estado: "Pendiente",
+    fechaSolicitud: Date.now(),
+  });
+  trade
+    .save()
+    .then((result) => {
+      getUsers(usuarioAnfitrion, usuarioPropuesto, trade._id);
+      console.log("creando trade");
+      response.status(201).send({
+        message: "Trade Created Successfully",
+        result,
+      });
+    })
+    .catch((error) => {
+      console.log("ERROR", error);
+      response.status(500).send({
+        message: "Error creating item",
+        error,
+      });
+    });
