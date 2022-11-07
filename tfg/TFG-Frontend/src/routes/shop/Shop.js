@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import "./Shop.css";
 
-
+import moment from "moment"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Checkbox,
@@ -18,7 +18,7 @@ import { getItems, search } from "../../Controlador";
 
 const Shop = () => {
   //Variables de estado
-
+  let adapter = new  AdapterDayjs('en-GB')
   const [page, setPage] = React.useState(1);
   const [items, setItems] = useState([]);
   const LOCATION = "shop";
@@ -92,13 +92,15 @@ const Shop = () => {
             <div className="shopBar__margin">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="Fecha de inicio"
+                  label="Rango inicial..."
                   value={form.fechaInicial}
                   onChange={(e) => {
                     updateForm({ fechaInicial: e })
                   }}
                   renderInput={(params) => <TextField {...params} size="small" />}
                   
+                  inputFormat="DD/MM/YYYY"
+                  minDate={new Date()}
                 />
               </LocalizationProvider>
             </div>
@@ -106,13 +108,14 @@ const Shop = () => {
             <div className="shopBar__margin">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="Fecha de finalización"
+                  label="Rango final..."
                   value={form.fechaFinal}
                   onChange={(e) => {
                     updateForm({ fechaFinal: e })
                   }}
                   renderInput={(params) => <TextField {...params}  size="small" />}
-                 
+                  inputFormat="DD/MM/YYYY"
+                  minDate={new Date()}
                 />
               </LocalizationProvider>
             </div>

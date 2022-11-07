@@ -56,10 +56,9 @@
 
 .card-item-place{
   text-decoration: none;
+  color: #fff;
 }
-.card-item-place:visited{
-   color: #fff;
-}
+
 
 .card-item-text-container{
    

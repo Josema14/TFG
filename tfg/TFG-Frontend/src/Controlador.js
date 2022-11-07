@@ -37,7 +37,7 @@ export function search(
   official
 ) {
 
-  let email = getEmail();
+  
   //Petición post con axios
   return axios.post("/search", {
     titulo: title,
@@ -46,7 +46,7 @@ export function search(
     personas: clients,
     intercambio: trade,
     oficial: official,
-    email
+    name: getUsuario()
   });
 }
 
@@ -62,7 +62,7 @@ export function getInventory(){
 export function purchase(_id){
 
   return axios.post('/purchase', {
-    email: getEmail(),
+    name: getUsuario(),
     _id: _id,
   })
 
@@ -71,7 +71,7 @@ export function purchase(_id){
 export function setTrade(_id){
   return axios
   .post("/setTrade", {
-    email: getEmail(),
+    name: getUsuario(),
     _id: _id,
   })
 }
@@ -79,7 +79,7 @@ export function setTrade(_id){
 export function cancelTrade(_id){
   return axios
   .post("/cancelTrade", {
-    email: getEmail(),
+    name: getUsuario(),
     _id: _id,
   })
 }

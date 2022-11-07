@@ -10,6 +10,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Card from "../shop/Item";
 import { aceptarIntercambio, rechazarIntercambio,getMessages, getUsuario } from "../../Controlador";
 import "./Trades.css"
+import moment from "moment"
 const Trades = () => {
 
   const [messages, setMessages] = useState([]);
@@ -118,6 +119,8 @@ const Trades = () => {
           width: 150,
           headerAlign: 'center',
           align: 'center',
+          valueFormatter: params => 
+          moment(params?.value).format("DD/MM/YYYY"),
         },
 
         {
@@ -227,6 +230,7 @@ const Trades = () => {
             style={{
               display: "flex",
               marginBottom: "5px",
+              marginRight:"50px",
               justifyContent: "center",
               marginTop: "10px",
             }}
@@ -242,9 +246,11 @@ const Trades = () => {
         <div
             style={{
               display: "flex",
-              marginBottom: "5px",
+              marginBottom: "10px",
               justifyContent: "center",
-              marginTop: "10px",
+            
+              alignContent:"center",
+              marginLeft:"60px"
             }}
           >
         <DialogActions>
@@ -253,7 +259,7 @@ const Trades = () => {
           <div>
              <button
              className="card-item-button"
-             style={{ marginRight: "100px" }}
+            
              onClick={handleClose}
            >
              Regresar
@@ -266,7 +272,7 @@ const Trades = () => {
                 style={{ marginRight: "100px" }}
                 onClick={reIntercambio}
               >
-                Cancelar
+                Rechazar
               </button>
               
 
@@ -282,7 +288,7 @@ const Trades = () => {
 
                 <button
                 className="card-item-button"
-                style={{ marginRight: "100px" }}
+                
                 onClick={handleClose}
               >
                 Regresar
@@ -291,7 +297,7 @@ const Trades = () => {
 
               <button
                 className="card-item-button"
-                style={{ marginLeft: "100px" }}
+                style={{ marginLeft: "125px" }}
                 onClick={reIntercambio}
               >
                 Cancelar Intercambio

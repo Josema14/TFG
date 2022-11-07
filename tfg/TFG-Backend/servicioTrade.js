@@ -46,6 +46,13 @@ function cancelTradesByProduct(idTrade){
         { estado: "Cancelado" })
 }
 
+//Cancel Trade
+function cancelTrade(idTrade){
+
+  return Trade.findOneAndUpdate({_id : idTrade},{estado: "Cancelado"});
+
+}
+
 //Accept Trade
 
 async function acceptTrade(trade) {
@@ -95,4 +102,4 @@ async function acceptTrade(trade) {
     itemService.deleteItemById(_id1)
   }
 
-module.exports = { getMessages, newTrade, getTrade, cancelTradesByProduct, acceptTrade  };
+module.exports = { getMessages, newTrade, getTrade, cancelTradesByProduct, acceptTrade,cancelTrade  };
