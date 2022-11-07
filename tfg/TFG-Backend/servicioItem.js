@@ -42,25 +42,35 @@ function getInventory(user) {
   return inventario.concat(user.trading);
 }
 
-function getValidInventory(inventory, price) {
+async function getValidInventory(inventory, price,_id) {
   let validItems = [];
+  let repeatedItem = false;
   let dateNow = Date.now();
+
+ let tradeItem = await getItem(_id)
+  
   for (let item of inventory) {
+ 
     if (
-      item.precio >= price - DIFF_MONEY &&
-      item.precio <= price + DIFF_MONEY
+      item.precio >= (Number(price) - DIFF_MONEY)&&
+      item.precio <= (Number(price) + DIFF_MONEY)
     ) {
       let diffTime = Math.abs(dateNow - item.fechaInicio);
       let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays > 14) {
+    
+      if(tradeItem.original.equals(item._id)){
+        repeatedItem = true
+        break
+      }
+      else if (diffDays > 14) {
         validItems.push(item);
       }
+      
     }
   }
-
+  
  
-  return validItems;
+  return{items: validItems, repeated: repeatedItem};
 }
 
 async function  purchaseItem(_id){
@@ -106,6 +116,8 @@ async function searchItems(params){
       if (params.intercambio == true) query.tipo = "Intercambio";
       else query.tipo = "oficial";
     }
+
+    query.precio = {$lte: params.precioMaximo, $gte: params.precioMinimo}
 
    
     return Item.find({

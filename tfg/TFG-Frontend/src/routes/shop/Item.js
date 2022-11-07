@@ -156,10 +156,21 @@ export default function Card(props) {
       return;
     }
 
-    itemsByPrice(item.precio)
+    itemsByPrice(item.precio,item._id)
       .then((res) => {
         console.log(res)
-        let newArray = [...res.data.items];
+        if (res.data.result.repeated){
+          alert("Ya tienes el producto original")
+          return
+        }
+        else if (res.data.result.items.length === 0){
+          alert("No tienes ningún paquete apto para el intercambio")
+          return
+        }
+
+       
+        console.log(res)
+        let newArray = [...res.data.result.items];
         
         setProducto(newArray[0]);
         setInventario(newArray);

@@ -34,7 +34,9 @@ export function search(
   finalRange,
   clients,
   trade,
-  official
+  official,
+  precioMinimo,
+  precioMaximo,
 ) {
 
   
@@ -46,7 +48,9 @@ export function search(
     personas: clients,
     intercambio: trade,
     oficial: official,
-    name: getUsuario()
+    name: getUsuario(),
+    precioMaximo : precioMaximo,
+    precioMinimo : precioMinimo
   });
 }
 
@@ -96,12 +100,14 @@ export function proposeTrade(_idAnfitrion,_idPropuesto,host){
 
 }
 
-export function itemsByPrice(price){
+export function itemsByPrice(price,_id){
   return axios
       .get("/inventoryByPrice", {
         params: {
           name: getUsuario(),
           price: price,
+          _id: _id
+
         }})
 
 }

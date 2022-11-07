@@ -183,13 +183,19 @@ app.get("/inventory", (request, response) => {
 //Comprobar que hace bien la fecha
 app.get("/inventoryByPrice", (request, response) => {
   userService.getUsuarioPopulated(request.query.name).then((result) => {
-    let items = itemService.getValidInventory(
+    itemService.getValidInventory(
       result.inventory,
-      request.query.price
-    );
-    return response.status(200).send({
-      items,
-    });
+      request.query.price,
+      request.query._id
+    ).then( (result) => {
+      
+      return response.status(200).send({
+        result,
+        
+      });
+    })
+    
+   
   });
 });
 
