@@ -7,8 +7,9 @@ import Shop from "./routes/shop/Shop";
 import Trades from "./routes/Trades/Trades";
 import Footer from "./routes/home/Footer/Footer";
 import Inventory from "./routes/Inventory/Inventory";
-
+import Profile from "./routes/Profile/Profile";
 import {React, useEffect,useState} from 'react';
+import RadioGroupContext from "@mui/material/RadioGroup/RadioGroupContext";
 export default function Links() {
 
 
@@ -75,6 +76,10 @@ export default function Links() {
             userLogged === true ? <Trades/> : <Navigate to="/login" replace/>
           }
         />
+
+        <Route exact path="/profile/:username" element={
+          userLogged === true ? <Profile/> : <Navigate to="/login" replace/>
+        }/>
       </Routes>
 
       {/* Footers */}

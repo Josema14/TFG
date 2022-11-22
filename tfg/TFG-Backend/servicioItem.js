@@ -42,14 +42,21 @@ function getInventory(user) {
   return inventario.concat(user.trading);
 }
 
-async function getValidInventory(inventory, price,_id) {
+async function getValidInventory(user, price,_id) {
   let validItems = [];
   let repeatedItem = false;
   let dateNow = Date.now();
 
  let tradeItem = await getItem(_id)
+
+  for (let itemTrade of user.trading){
+    if(tradeItem.original.equals(itemTrade.original)){
+      repeatedItem = true
+      break
+    }
+  }
   
-  for (let item of inventory) {
+  for (let item of user.inventory) {
  
     if (
       item.precio >= (Number(price) - DIFF_MONEY)&&
@@ -97,7 +104,7 @@ async function searchItems(params){
 
   let query = {};
 
-  if (params.name !== null)
+  if (params.name !== "")
       query.propietario = { $regex: "^((?!" + params.name + ").)*$" };
 
     if (params.fechaInicial) {

@@ -334,7 +334,7 @@ export default function Card(props) {
           <label className="card-item-text-price one">{item.precio}€</label>
         </div>
         <div className="card-item-button-container">
-          <label className="three">@{item.propietario}</label>
+          <a href={"http://localhost:3000/profile/" + item.propietario} className="three">@{item.propietario}</a>
 
           {<MostrarBotones/>}
         </div>

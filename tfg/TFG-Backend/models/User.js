@@ -4,6 +4,15 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const Item = require("./Item")
+
+const ProfileSchema = mongoose.Schema({
+    image: String,
+    description: String,
+    twitter: String,
+    instagram: String,
+    facebook: String
+  });
+
 //Creamos el schema
 const UserSchema = new mongoose.Schema({
     //Los campos de un usuario son: email, nombre, contraseña y fecha de creación
@@ -44,7 +53,9 @@ const UserSchema = new mongoose.Schema({
     message:{
         type: [Schema.Types.ObjectId],
         ref: 'Trade'
-    }
+    },
+
+    profile: ProfileSchema
 
    
 

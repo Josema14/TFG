@@ -1,0 +1,148 @@
+.profile{
+
+    height: 75.8vh;
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-container{
+    background-color: white;
+    height: 50vh;
+    width: 30vw;
+    box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.75);
+    border-radius: 10px 10px 10px 10px;
+}
+
+
+
+.icon {
+    width: 150px;
+    height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    z-index: 4;
+    box-shadow: 0px 5px 50px 0px #9f05ff69, 0px 0px 0px 7px rgba(107, 74, 255, 0.5);
+
+    
+  }
+  .profile-container-button{
+   
+    border: none;
+	outline: none;
+	padding: 8px 10px;
+	border-radius: 50px;
+	color: #fff;
+    font-weight: bold;
+	background-image: linear-gradient( 135deg, #9f05ff69 10%, #fd5e086b 100%);
+    box-shadow: 0 3px 20px 0 #0000003b;
+    cursor: pointer;
+  }
+
+  .profile-container-button:active{
+    transform: scale(0.95);
+  }
+
+ 
+
+  .profile-container-button-update{
+    overflow: hidden;
+    position: relative;
+    left: 450px;
+    bottom: 130px;
+  }
+
+.profile-container-body{
+    margin-top: -65px;
+    text-align: center;
+    padding: 0 20px;
+    padding-bottom: 40px;
+
+}
+
+.profile-container-body-name{
+    font-weight: 700;
+    font-size: 24px;
+    color: #6944ff;
+    margin-bottom: 15px;
+}
+.profile-container-body-desc{
+    font-size: 18px;
+    font-weight: 500;
+    color: #324e63;
+    margin-bottom: 15px;
+}
+.profile-container-body-stats{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-top: 35px;
+
+}
+.profile-container-body-stats-item{
+    padding: 10px 35px;
+    min-width: 150px;
+}
+
+.profile-container-stats-item-title{
+    font-weight: 700;
+    font-size: 27px;
+  
+    color: #324e63;
+}
+.profile-container-stats-item-txt{
+    font-weight: 500;
+    margin-top: 7px;
+    color: #324e63;
+}
+.profile-container-body-social{
+   
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.profile-container-social-item{
+
+    display: inline-flex;
+      width: 55px;
+      height: 55px;
+      margin: 15px;
+   
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      background: #405de6;
+      box-shadow: 0px 7px 30px rgba(43,98,169,0.5);
+      position: relative;
+      font-size: 21px;
+      flex-shrink: 0;
+      transition: all .3s;
+
+}
+.twitter{
+    background: linear-gradient(45deg, #1da1f2,#0e71c8);
+        box-shadow: 0px 4px 30px rgba(19, 127, 212, 0.7);
+}
+
+.instagram{
+    background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+    box-shadow: 0px 4px 30px rgba(120, 64, 190, 0.6);
+  
+}
+
+.facebook{
+    background: linear-gradient(45deg, #3b5998, #0078d7);
+        box-shadow: 0px 4px 30px rgba(43, 98, 169, 0.5);
+}
+
+.icon-font {
+    display: inline-flex;
+  }

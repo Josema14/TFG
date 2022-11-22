@@ -141,6 +141,10 @@ export function rechazarIntercambio(trade){
 
 }
 
+export function getUsuarioServidor(usuario){
+  return axios.get("/user/" + usuario);
+}
+
 export function getUsuario() {
   //Obtenemos el usuario del almacenamiento local
   let user = localStorage.getItem("user");
@@ -150,6 +154,28 @@ export function getUsuario() {
     user = "";
   }
   return user;
+}
+
+export function updateUser(userdata){
+  console.log(userdata.imageData)
+
+  const formData = new FormData();
+  
+  formData.append('username', getUsuario())
+  for (const property in userdata) {
+    if(userdata[property] !== null)
+    formData.append(property, userdata[property]);
+  }
+  
+  return axios.put("/user",formData,
+  {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+  
+  
+  )
 }
 
 export function getEmail() {

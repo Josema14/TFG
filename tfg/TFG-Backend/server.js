@@ -1,6 +1,27 @@
 const express = require("express");
 const app = express();
 
+ const mime =  require('mime-types');
+
+
+//Multer
+const multer  = require('multer')
+
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'avatar/')
+  },
+  filename: function (req, file, cb) {
+    console.log()
+    cb(null, req.body.username +"."+ mime.extension(file.mimetype)) 
+  }
+})
+
+
+
+
+const avatar = multer({ storage: storage})
 //Importamos cors
 const cors = require("cors");
 //Importamos la conexion a la BD
@@ -18,12 +39,10 @@ const Item = require("./models/Item");
 const itemService = require("./servicioItem");
 const userService = require("./servicioUser");
 const tradeService = require("./servicioTrade");
-const { get } = require("mongoose");
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// parse application/json
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended : true }));
+app.use(express.json());
+app.use("/avatar", express.static(__dirname + '/avatar'));
 //Conectamos con mongo
 
 dbConnect();
@@ -124,9 +143,29 @@ app.post("/login", (request, response) => {
     });
 });
 
+app.get("/user/:name", async (request,response) => {
+
+   
+    let usuario = await userService.getUsuarioByName(request.params.name)
+    response.status(200).send({
+      usuario
+    })
+
+})
+
+app.put("/user",avatar.single('imageData'),async (request, response) => {
+  let urlImagen;
+  if (request.file != undefined) urlImagen = request.file.filename;
+ try{
+  await userService.updateProfile(request.body, urlImagen)
+ } catch(error){
+  console.error(error)
+ }
+
+})
+
 //new Item
 app.post("/item", (request, response) => {
-  //Comprobar bad request
 
   itemService
     .newItem(request.body)
@@ -138,8 +177,8 @@ app.post("/item", (request, response) => {
       });
     })
     .catch((error) => {
-      response.status(500).send({
-        message: "Error creating item",
+      response.status(400).send({
+        message: "Bad Request: Error Creating Item",
         error,
       });
     });
@@ -184,7 +223,7 @@ app.get("/inventory", (request, response) => {
 app.get("/inventoryByPrice", (request, response) => {
   userService.getUsuarioPopulated(request.query.name).then((result) => {
     itemService.getValidInventory(
-      result.inventory,
+      result,
       request.query.price,
       request.query._id
     ).then( (result) => {
@@ -290,14 +329,23 @@ app.post("/refuseTrade", (request, response) => {
 app.post("/purchase", (request, response) => {
   //Obtenemos el usuario
   userService
-    .getUsuarioByName(request.body.name)
+    .getUsuarioPopulated(request.body.name)
     .then((user) => {
       //Comprobamos si ya tiene el paquete
 
-      for (id of user.inventory) {
-        if (id.equals(request.body._id)) {
+      for (item of user.inventory) {
+        if (item._id.equals(request.body._id)) {
           response.status(500).send({
             message: "Ya posee este objeto",
+          });
+          return;
+        }
+      }
+
+      for (item of user.trading) {
+        if (item.original.equals(request.body._id)) {
+          response.status(500).send({
+            message: "Ya posee este objeto en su lista de intercambio",
           });
           return;
         }

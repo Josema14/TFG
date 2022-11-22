@@ -1,5 +1,5 @@
 const User = require("./models/User");
-
+const repositorioUsuario = require("./repositorios/repositorioUsuario")
 function getUsuarioByName(user) {
   return User.findOne({ name: user });
 }
@@ -17,6 +17,23 @@ async function saveTradeUsers(user1, user2, _id) {
 
   anfitrion.save();
   cliente.save();
+}
+
+async function updateProfile(data, url){
+
+  
+  if (url != "" && url!= undefined) data.image = url;
+  let username = data.username;
+  delete data.username;
+  delete data.img;
+  try{
+  
+  await repositorioUsuario.updateUserProfileByName(username,data)
+  } catch{
+    (error) =>{
+      console.log(error)
+    }
+  }
 }
 
 function addItem(user, _id) {
@@ -67,4 +84,5 @@ module.exports = {
   addItem,
   addTradeItem,
   cancelTrade,
+  updateProfile
 };

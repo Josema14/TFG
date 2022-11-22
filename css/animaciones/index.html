@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+    <style>
+        .padre{
+            width: 400px;
+            height: 400px;
+            background-color: blue;
+        }
+
+        .hijo{
+            width:50%;
+            height: 50%;
+            background-color: red;
+            transition: all 1s;
+            
+        }
+        .hijo .bye{
+            display:none;
+            transition: 1s
+        }
+
+        .padre:hover .hijo{
+            transform: translateX(100%);
+            background-color: green;
+            color: white
+        }
+
+        .padre:hover .hijo .bye{
+            display: block;
+        }
+
+        .padre:hover .hijo .greet{
+            display: none;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="padre" >
+        <div class="hijo">
+            <h1 class="greet">Good Morning!</h1>
+            <h1 class="bye">Goodbye!</h1>
+
+        </div>
+    </div>
+
+    
+</body>
+</html>

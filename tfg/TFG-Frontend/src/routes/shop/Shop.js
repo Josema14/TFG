@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Shop.css";
 
-import moment from "moment";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Checkbox,
@@ -9,8 +8,7 @@ import {
   FormControlLabel,
   TextField,
   Pagination,
-  Box,
-  Slider,
+
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 //import Item from "../../components/items/Item";

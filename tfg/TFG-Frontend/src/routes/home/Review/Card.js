@@ -6,7 +6,7 @@ export default function Card(props) {
     <div className='card-container'>
         <div className='card-image-container'>
 
-        <img src={`/${props.imagen}.jpg`}/>
+        <img src={`/${props.imagen}.jpg`} alt="Imagen de usuario"/>
 
         </div>
 
