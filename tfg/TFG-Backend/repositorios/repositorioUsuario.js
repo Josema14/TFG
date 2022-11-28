@@ -39,6 +39,18 @@ async function findUserByName(username){
   return await User.findOne({name:username});
 }
 
+async function addPointsByName(username,points){
+ 
+  let user = await findUserByName(username);
+  if (user.tripPoints == undefined) user.tripPoints = Number(points);
+  else user.tripPoints += Number(points);
+
+  console.log(user.tripPoints)
+  return await user.save();
+  
+
+}
+
 async function updateUserProfileByName(username,newProfile){
   console.log(newProfile)
   let user = await findUserByName(username);
@@ -49,5 +61,5 @@ async function updateUserProfileByName(username,newProfile){
 }
 
 module.exports = {
-    createUser,findUserById,findAllUsers,deleteUserById,deleteUserByName,updateUser, updateUserProfileByName
+    createUser,findUserById,findAllUsers,deleteUserById,deleteUserByName,updateUser, updateUserProfileByName,addPointsByName
 }

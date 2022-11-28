@@ -45,6 +45,8 @@ const Header = (props) => {
       <div className="header__groupButtons">
         {isLoggedIn() === true ? (
           <>
+          <a href="/tripPoints"><span >TripPoints: {localStorage.getItem("points")}</span></a>
+          
            <Tooltip title="Mensajes">
             <IconButton component={Link} to="/trades">
               <MailIcon  />
@@ -73,6 +75,8 @@ const Header = (props) => {
             />
             </a>
             </IconButton>
+
+            
            
 
 

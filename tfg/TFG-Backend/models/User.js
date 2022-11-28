@@ -55,6 +55,11 @@ const UserSchema = new mongoose.Schema({
         ref: 'Trade'
     },
 
+    tripPoints:{
+        type: Number,
+        default:0,
+    },
+
     profile: ProfileSchema
 
    

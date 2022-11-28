@@ -1,27 +1,22 @@
 const express = require("express");
 const app = express();
 
- const mime =  require('mime-types');
-
+const mime = require("mime-types");
 
 //Multer
-const multer  = require('multer')
-
+const multer = require("multer");
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'avatar/')
+    cb(null, "avatar/");
   },
   filename: function (req, file, cb) {
-    console.log()
-    cb(null, req.body.username +"."+ mime.extension(file.mimetype)) 
-  }
-})
+    console.log();
+    cb(null, req.body.username + "." + mime.extension(file.mimetype));
+  },
+});
 
-
-
-
-const avatar = multer({ storage: storage})
+const avatar = multer({ storage: storage });
 //Importamos cors
 const cors = require("cors");
 //Importamos la conexion a la BD
@@ -40,9 +35,9 @@ const itemService = require("./servicioItem");
 const userService = require("./servicioUser");
 const tradeService = require("./servicioTrade");
 // parse application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended : true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/avatar", express.static(__dirname + '/avatar'));
+app.use("/avatar", express.static(__dirname + "/avatar"));
 //Conectamos con mongo
 
 dbConnect();
@@ -99,7 +94,6 @@ app.post("/register", (request, response) => {
 app.post("/login", (request, response) => {
   User.findOne({ email: request.body.email })
     .then((user) => {
-
       bcrypt
         .compare(request.body.password, user.password)
         .then((passwordCheck) => {
@@ -119,19 +113,20 @@ app.post("/login", (request, response) => {
             "RANDOM-TOKEN",
             { expiresIn: "24h" }
           );
-          let image = "josemaria.png"
-          if (user.profile?.image != undefined ) image = user.profile.image;
+          let image = "josemaria.png";
+          if (user.profile?.image != undefined) image = user.profile.image;
           // return success response
           response.status(200).send({
             message: "Login Successful",
             email: user.email,
             user: user.name,
             image,
+            points:user.tripPoints,
             token,
           });
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error);
           response.status(400).send({
             message: "Passwords does not match2",
             error,
@@ -147,33 +142,40 @@ app.post("/login", (request, response) => {
     });
 });
 
-app.get("/user/:name", async (request,response) => {
+app.get("/user/:name", async (request, response) => {
+  let usuario = await userService.getUsuarioByName(request.params.name);
+  response.status(200).send({
+    usuario,
+  });
+});
 
-   
-    let usuario = await userService.getUsuarioByName(request.params.name)
-    response.status(200).send({
-      usuario
-    })
-
-})
-
-app.put("/user",avatar.single('imageData'),async (request, response) => {
+app.put("/user", avatar.single("imageData"), async (request, response) => {
   let urlImagen;
   if (request.file != undefined) urlImagen = request.file.filename;
- try{
-  let user = await userService.updateProfile(request.body, urlImagen)
-  return response.status(200).send({
-    image: user.profile.image
-  })
- } catch(error){
-  console.error(error)
- }
+  try {
+    let user = await userService.updateProfile(request.body, urlImagen);
+    return response.status(200).send({
+      image: user.profile.image,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
 
-})
+app.post("/user/tripPoints", async (request, response) => {
+  console.log(request.body);
+  try {
+    let user = await userService.addPoints(request.body.name,request.body.points);
+    return response.status(200).send({
+      points: user.tripPoints,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 //new Item
 app.post("/item", (request, response) => {
-
   itemService
     .newItem(request.body)
     .then((result) => {
@@ -229,19 +231,13 @@ app.get("/inventory", (request, response) => {
 //Comprobar que hace bien la fecha
 app.get("/inventoryByPrice", (request, response) => {
   userService.getUsuarioPopulated(request.query.name).then((result) => {
-    itemService.getValidInventory(
-      result,
-      request.query.price,
-      request.query._id
-    ).then( (result) => {
-      
-      return response.status(200).send({
-        result,
-        
+    itemService
+      .getValidInventory(result, request.query.price, request.query._id)
+      .then((result) => {
+        return response.status(200).send({
+          result,
+        });
       });
-    })
-    
-   
   });
 });
 

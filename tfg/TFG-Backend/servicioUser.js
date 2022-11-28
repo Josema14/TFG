@@ -76,6 +76,12 @@ async function addTradeItem(user, _id, _idOriginal) {
   
 }
 
+async function addPoints(user, points) {
+ 
+  return await repositorioUsuario.addPointsByName(user,points);
+  
+}
+
 async function cancelTrade(userName, _id, _idOriginal){
 
     let user = await User.findOne({ name: userName })
@@ -100,5 +106,6 @@ module.exports = {
   addItem,
   addTradeItem,
   cancelTrade,
-  updateProfile
+  updateProfile,
+  addPoints
 };

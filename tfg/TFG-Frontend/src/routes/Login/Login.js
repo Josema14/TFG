@@ -54,6 +54,7 @@ function Login(props) {
       localStorage.setItem("email", user.email)
       localStorage.setItem("user", user.user)
       localStorage.setItem("img",user.image)
+      localStorage.setItem("points",user.points)
       props.logIn()
       //Nos movemos a la página principal
       navigate("/");

@@ -10,6 +10,7 @@ import Inventory from "./routes/Inventory/Inventory";
 import Profile from "./routes/Profile/Profile";
 import {React, useEffect,useState} from 'react';
 import RadioGroupContext from "@mui/material/RadioGroup/RadioGroupContext";
+import TripPoints from "./routes/TripPoints/TripPoints";
 export default function Links() {
 
 
@@ -80,6 +81,15 @@ export default function Links() {
         <Route exact path="/profile/:username" element={
           <Profile/>
         }/>
+
+<Route
+          exact
+          path="/tripPoints"
+          element={
+            //Redireccionamos si no estamos logueados
+            <TripPoints/>
+          }
+        />
       </Routes>
 
       {/* Footers */}

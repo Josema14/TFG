@@ -28,6 +28,13 @@ export function getItems() {
   });
 }
 
+export function addPoints(points){
+    return axios.post("/user/tripPoints",{
+      name: getUsuario(),
+      points: points,
+    })
+}
+
 export function search(
   title,
   initialRange,
