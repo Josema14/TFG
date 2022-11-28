@@ -8,7 +8,7 @@ export default function Home() {
     <>
     <Title/>
     <Summary/>
-    <Review/>
+    
     </>
   )
 }

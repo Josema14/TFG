@@ -51,17 +51,20 @@ export default function Profile() {
     getUsuarioServidor(username)
       .then((res) => {
         setUsuario(res?.data?.usuario);
+        if(res.data.usuario.profile!== null && res.data.usuario.profile!==undefined){
         setImage(res.data.usuario.profile.image);
         setDescription(res.data.usuario.profile.description);
         setSocials({
           twitter:res.data.usuario.profile.twitter,
         instagram:res.data.usuario.profile.instagram,
-        facebook:res.data.usuario.profile.fac,
+        facebook:res.data.usuario.profile.facebook,
         })
-        
+      }
       })
       .catch((error) => {
-        navigate("/");
+       
+       console.log(error)
+       navigate("/");
       });
   }, []);
 
@@ -69,9 +72,15 @@ export default function Profile() {
   const inputFileRef = createRef(null);
 
   function handleUpdate() {
-    console.log(form);
-    updateUser(form);
-    //navigate(0)
+    
+    updateUser(form).then((result) =>{
+      console.log(result.data.image)
+      localStorage.setItem("img",result.data.image)
+      navigate(0)
+    })
+   
+    
+    
   }
 
   const handleClickOpen = () => {
@@ -169,7 +178,7 @@ export default function Profile() {
           <TextField
             margin="dense"
             id="Twitter"
-            label="Twitter"
+            label="Usuario de Twitter"
             type="text"
             value={form.twitter}
             onChange={(e) => updateForm({ twitter: e.target.value })}
@@ -180,7 +189,7 @@ export default function Profile() {
           <TextField
             margin="dense"
             id="Instagram"
-            label="Instagram"
+            label="Usuario de Instagram"
             type="text"
             value={form.instagram}
             onChange={(e) => updateForm({ instagram: e.target.value })}
@@ -191,7 +200,7 @@ export default function Profile() {
           <TextField
             margin="dense"
             id="Facebook"
-            label="Facebook"
+            label="Usuario de Facebook"
             type="text"
             value={form.facebook}
             onChange={(e) => updateForm({ facebook: e.target.value })}
@@ -219,6 +228,7 @@ export default function Profile() {
             className="icon"
           />
         </div>
+        {localStorage.getItem("user") === username ? (
         <div className="profile-container-buttonContainer">
           <button
             className="profile-container-button profile-container-button-update"
@@ -227,12 +237,12 @@ export default function Profile() {
             Editar Perfil
           </button>
         </div>
-
+) : <></>}
         <div className="profile-container-body">
           <div className="profile-container-body-name">{usuario.name}</div>
           <div className="profile-container-body-desc">{description} </div>
           <div className="profile-container-body-desc">
-            Miembro desde:<strong>{usuario?.date} </strong>{" "}
+            Miembro desde: <strong>{usuario?.date} </strong>{" "}
           </div>
 
           {/*Estadísticas*/}

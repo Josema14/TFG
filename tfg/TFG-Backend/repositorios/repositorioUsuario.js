@@ -40,12 +40,12 @@ async function findUserByName(username){
 }
 
 async function updateUserProfileByName(username,newProfile){
-  console.log(username, newProfile)
-  let user = await findUserByName(username);
- 
-  newProfile = {...user.profile.toObject(),...newProfile}
   console.log(newProfile)
-  User.updateOne({ name: username }, {profile: newProfile},{ multi: false, runValidators: true, omitUndefined: true }).exec();
+  let user = await findUserByName(username);
+ console.log(user)
+  //newProfile = {...user.profile.toObject(),...newProfile}
+  
+  return await User.findOneAndUpdate({ name: username }, {profile: newProfile},{  setDefaultsOnInsert: true,new: true,upsert: true, }).exec();
 }
 
 module.exports = {

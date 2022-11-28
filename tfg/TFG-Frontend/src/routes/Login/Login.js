@@ -49,10 +49,11 @@ function Login(props) {
 
       //Obtenemos el usuario 
       const user = response.data;
-
+      
       //Preparamos el login
       localStorage.setItem("email", user.email)
       localStorage.setItem("user", user.user)
+      localStorage.setItem("img",user.image)
       props.logIn()
       //Nos movemos a la página principal
       navigate("/");

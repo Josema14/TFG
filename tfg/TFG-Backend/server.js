@@ -99,6 +99,7 @@ app.post("/register", (request, response) => {
 app.post("/login", (request, response) => {
   User.findOne({ email: request.body.email })
     .then((user) => {
+
       bcrypt
         .compare(request.body.password, user.password)
         .then((passwordCheck) => {
@@ -118,18 +119,21 @@ app.post("/login", (request, response) => {
             "RANDOM-TOKEN",
             { expiresIn: "24h" }
           );
-
+          let image = "josemaria.png"
+          if (user.profile?.image != undefined ) image = user.profile.image;
           // return success response
           response.status(200).send({
             message: "Login Successful",
             email: user.email,
             user: user.name,
+            image,
             token,
           });
         })
         .catch((error) => {
+          console.log(error)
           response.status(400).send({
-            message: "Passwords does not match",
+            message: "Passwords does not match2",
             error,
           });
         });
@@ -157,7 +161,10 @@ app.put("/user",avatar.single('imageData'),async (request, response) => {
   let urlImagen;
   if (request.file != undefined) urlImagen = request.file.filename;
  try{
-  await userService.updateProfile(request.body, urlImagen)
+  let user = await userService.updateProfile(request.body, urlImagen)
+  return response.status(200).send({
+    image: user.profile.image
+  })
  } catch(error){
   console.error(error)
  }
@@ -362,7 +369,7 @@ app.post("/purchase", (request, response) => {
           //añadimos el paquete al usuario
           userService.addItem(user, request.body._id).then((result2) => {
             console.log(result2);
-            response.status(201).send({
+            response.status(200).send({
               message: "Purchase Created Successfully",
               result2,
             });

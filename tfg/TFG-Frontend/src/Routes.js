@@ -78,7 +78,7 @@ export default function Links() {
         />
 
         <Route exact path="/profile/:username" element={
-          userLogged === true ? <Profile/> : <Navigate to="/login" replace/>
+          <Profile/>
         }/>
       </Routes>
 

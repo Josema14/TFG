@@ -166,6 +166,8 @@ export function updateUser(userdata){
     if(userdata[property] !== null)
     formData.append(property, userdata[property]);
   }
+
+  
   
   return axios.put("/user",formData,
   {

@@ -1,7 +1,23 @@
 const User = require("./models/User");
 const repositorioUsuario = require("./repositorios/repositorioUsuario")
-function getUsuarioByName(user) {
-  return User.findOne({ name: user });
+async function getUsuarioByName(user) {
+  let userBD = await User.findOne({ name: user });
+
+  //Procesamos la fecha:
+
+  let month = userBD.date.getUTCMonth() + 1; //months from 1-12
+let  day = userBD.date.getUTCDate();
+let year = userBD.date.getUTCFullYear();
+
+  newdate = day + "/" + month + "/" + year;
+  let finalUser = {
+    name:userBD.name,
+    date: newdate,
+    profile: userBD.profile
+
+  }
+
+  return finalUser
 }
 
 async function getUsuarioPopulated(user) {
@@ -21,14 +37,14 @@ async function saveTradeUsers(user1, user2, _id) {
 
 async function updateProfile(data, url){
 
-  
+  console.log(data)
   if (url != "" && url!= undefined) data.image = url;
   let username = data.username;
   delete data.username;
   delete data.img;
   try{
   
-  await repositorioUsuario.updateUserProfileByName(username,data)
+  return await repositorioUsuario.updateUserProfileByName(username,data)
   } catch{
     (error) =>{
       console.log(error)

@@ -65,11 +65,13 @@ const Header = (props) => {
             }} >
               <ExitToAppIcon  />
             </IconButton>
-            <IconButton component={Link} to={"/profile/" + localStorage.getItem("user")}>
+            <IconButton >
+              <a href={"/profile/" + localStorage.getItem("user")}>
             <Avatar
               alt="Avatar"
-              src="https://pbs.twimg.com/profile_images/1563282268486979585/mHu5iGlC_400x400.jpg"
+              src={"http://localhost:5000/avatar/" + localStorage.getItem("img")}
             />
+            </a>
             </IconButton>
            
 
