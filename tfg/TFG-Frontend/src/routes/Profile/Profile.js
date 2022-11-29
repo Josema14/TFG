@@ -271,7 +271,7 @@ export default function Profile() {
               <div className="profile-container-body-stats-item">
                 <a
                   href={"https://twitter.com/" + socials.twitter}
-                  class="profile-container-social-item twitter"
+                  className="profile-container-social-item twitter"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -287,7 +287,7 @@ export default function Profile() {
             <div className="profile-container-body-stats-item">
               <a
                 href={"https://www.instagram.com/" + socials.instagram}
-                class="profile-container-social-item instagram"
+                className="profile-container-social-item instagram"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -303,7 +303,7 @@ export default function Profile() {
             <div className="profile-container-body-stats-item">
               <a
                 href={"https://www.facebook.com/" + socials.facebook}
-                class="profile-container-social-item facebook"
+                className="profile-container-social-item facebook"
                 target="_blank"
                 rel="noreferrer"
               >

@@ -11,6 +11,7 @@ import Profile from "./routes/Profile/Profile";
 import {React, useEffect,useState} from 'react';
 import RadioGroupContext from "@mui/material/RadioGroup/RadioGroupContext";
 import TripPoints from "./routes/TripPoints/TripPoints";
+import Items from "./routes/Items/Items";
 export default function Links() {
 
 
@@ -88,6 +89,15 @@ export default function Links() {
           element={
             //Redireccionamos si no estamos logueados
             <TripPoints/>
+          }
+        />
+
+<Route
+          exact
+          path="/item"
+          element={
+            //Redireccionamos si no estamos logueados
+            <Items/>
           }
         />
       </Routes>
