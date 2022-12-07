@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, "Introduzca un nombre"],
-        unique: false,
+        unique: true,
     },
     date: {
         type: Date,

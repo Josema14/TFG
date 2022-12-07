@@ -1,5 +1,8 @@
 const User = require("./models/User");
 const repositorioUsuario = require("./repositorios/repositorioUsuario")
+
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 async function getUsuarioByName(user) {
   let userBD = await User.findOne({ name: user });
 
@@ -18,6 +21,23 @@ let year = userBD.date.getUTCFullYear();
   }
 
   return finalUser
+}
+
+//Función para crear usuarios
+async function createUser(userdata) {
+
+  //Encriptamos la contraseña en la base de datos
+  let hashedPassword = await bcrypt.hash(userdata.password, 10);
+
+  //Una vez encriptada creamos el usuario que vamos a pasarle al repositorio
+  let user = {
+    email: userdata.email,
+    password: hashedPassword,
+    name: userdata.username,
+  }
+ 
+  //Lo enviamos al repositorio
+  return await repositorioUsuario.createUser(user)
 }
 
 async function getUsuarioPopulated(user) {
@@ -100,6 +120,7 @@ async function cancelTrade(userName, _id, _idOriginal){
 }
 
 module.exports = {
+  createUser,
   getUsuarioByName,
   getUsuarioPopulated,
   saveTradeUsers,

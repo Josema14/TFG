@@ -1,5 +1,6 @@
 const Item = require("./models/Item");
 const DIFF_MONEY = 100;
+const repositorioItem = require("./repositorios/repositorioItem")
 function getItems(name) {
   if (name !== "")
     return Item.find({ propietario: { $regex: "^((?!" + name + ").)*$" } });
@@ -19,21 +20,27 @@ async function getOriginalId(id) {
   return await getItem(id)
 }
 
-function newItem(item) {
-  const newItem = new Item({
+async function newItem(item,imagen) {
+
+  
+  let itemFinal = {
     titulo: item.titulo,
     ubicacion: item.ubicacion,
-    fechaInicio: item.fechaInicio,
-    imagen: item.imagen,
+    fechaInicio: item.fechaInicial,
+    imagen: imagen,
     fechaFinal: item.fechaFinal,
     descripcion: item.descripcion,
     tipo: item.tipo,
     personas: item.personas,
-    precio: item.precio,
+    precio: item.tripPoints,
     propietario: item.propietario,
     cantidad: item.cantidad,
-  });
-  return newItem.save();
+  }
+
+  console.log(itemFinal)
+  return await repositorioItem.createItem(itemFinal);
+  
+ 
 }
 
 function getInventory(user) {

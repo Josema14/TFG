@@ -286,7 +286,7 @@ export default function Card(props) {
       </Dialog>
 
       <div className="card-item-image-container">
-        <img src={item.imagen} alt="Imagen Viaje" />
+        <img src={"http://localhost:5000/images/" + item.imagen} alt="Imagen Viaje" />
       </div>
 
       <div className="card-item-text-container">

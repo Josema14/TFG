@@ -92,6 +92,8 @@
     color: grey;
     font-size:15px;
     font-weight: 300;
+    text-align: justify;
+text-justify: inter-word;
 }
 
 .card-item-text-container span{

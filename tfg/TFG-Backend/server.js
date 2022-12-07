@@ -16,7 +16,18 @@ var storage = multer.diskStorage({
   },
 });
 
+var storage2 = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images/");
+  },
+  filename: function (req, file, cb) {
+    console.log();
+    cb(null, req.body.propietario + req.body.titulo  + "." + mime.extension(file.mimetype));
+  },
+});
+
 const avatar = multer({ storage: storage });
+const images = multer({ storage: storage2 });
 //Importamos cors
 const cors = require("cors");
 //Importamos la conexion a la BD
@@ -38,6 +49,7 @@ const tradeService = require("./servicioTrade");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/avatar", express.static(__dirname + "/avatar"));
+app.use("/images", express.static(__dirname + "/images"));
 //Conectamos con mongo
 
 dbConnect();
@@ -88,6 +100,45 @@ app.post("/register", (request, response) => {
       });
     });
 });
+
+//Registro arreglado
+app.post("/users", async (request, response) => {
+  
+      try{
+        
+        //Intentamos crear el usuario
+        let user = await userService.createUser(request.body);
+       
+        response.status(201).send({
+          message: "User Created Successfully",
+          userId: user._id
+        });
+      } 
+      //Comprobación de errores
+      catch (error)  {
+      //Error email
+          if (error.code === 11000){
+
+            //Mensaje con todos los errores
+            let message = {};
+            //Si hubiera varios mensajes de error
+            for (const property in error.keyPattern) {
+              if(error.keyPattern[property] !== null)
+              message[property] = `${property} already in use`;
+            }
+          
+            //Enviamos los errores
+            response.status(400).send({
+              message,
+              
+            });
+          }
+
+      }
+    
+      
+});
+
 
 //Login
 
@@ -175,6 +226,7 @@ app.post("/user/tripPoints", async (request, response) => {
 });
 
 //new Item
+/*
 app.post("/item", (request, response) => {
   itemService
     .newItem(request.body)
@@ -191,6 +243,23 @@ app.post("/item", (request, response) => {
         error,
       });
     });
+});
+*/
+
+app.post("/item",images.single("imagen"), async(request, response) => {
+ 
+  let urlImagen;
+  if (request.file != undefined) urlImagen = request.file.filename;
+
+  try {
+    console.log(request.body)
+    let item = await itemService.newItem(request.body,urlImagen);
+    console.log(item)
+    return response.status(200).send();
+  } catch (error) {
+    console.error(error);
+  }
+  
 });
 
 //GetItems

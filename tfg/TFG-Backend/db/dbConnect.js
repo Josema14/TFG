@@ -11,6 +11,7 @@ async function dbConnect() {
       useUnifiedTopology: true,
     })
     .then(() => {
+      mongoose.connection.syncIndexes() 
       console.log("Successfully connected to MongoDB Atlas!");
     })
     .catch((error) => {

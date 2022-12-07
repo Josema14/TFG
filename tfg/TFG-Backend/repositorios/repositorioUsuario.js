@@ -1,12 +1,12 @@
 const User = require("../models/User");
 //Operaciones de creación
-function createUser(user) {
+
+async function createUser(user) {
   //Creamos el usuario
+
   const newUser = new User(user);
   //Guardamos el usuario en la base de datos
-  newUser.save();
-
-  return newUser._id
+  return await newUser.save();
 }
 
 //Operaciones de lectura
@@ -35,31 +35,39 @@ function updateUser(user) {
   User.updateOne({ _id: user._id }, user).exec();
 }
 
-async function findUserByName(username){
-  return await User.findOne({name:username});
+async function findUserByName(username) {
+  return await User.findOne({ name: username });
 }
 
-async function addPointsByName(username,points){
- 
+async function addPointsByName(username, points) {
   let user = await findUserByName(username);
   if (user.tripPoints == undefined) user.tripPoints = Number(points);
   else user.tripPoints += Number(points);
 
-  console.log(user.tripPoints)
+  console.log(user.tripPoints);
   return await user.save();
-  
-
 }
 
-async function updateUserProfileByName(username,newProfile){
-  console.log(newProfile)
+async function updateUserProfileByName(username, newProfile) {
+  console.log(newProfile);
   let user = await findUserByName(username);
- console.log(user)
+  console.log(user);
   //newProfile = {...user.profile.toObject(),...newProfile}
-  
-  return await User.findOneAndUpdate({ name: username }, {profile: newProfile},{  setDefaultsOnInsert: true,new: true,upsert: true, }).exec();
+
+  return await User.findOneAndUpdate(
+    { name: username },
+    { profile: newProfile },
+    { setDefaultsOnInsert: true, new: true, upsert: true }
+  ).exec();
 }
 
 module.exports = {
-    createUser,findUserById,findAllUsers,deleteUserById,deleteUserByName,updateUser, updateUserProfileByName,addPointsByName
-}
+  createUser,
+  findUserById,
+  findAllUsers,
+  deleteUserById,
+  deleteUserByName,
+  updateUser,
+  updateUserProfileByName,
+  addPointsByName,
+};

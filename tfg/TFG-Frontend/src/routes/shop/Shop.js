@@ -139,6 +139,8 @@ const Shop = () => {
                 size="small"
                 value={form.personas}
                 onChange={(e) => {
+                  if (e.target.value > 5) e.target.value = 5;
+                  else if(e.target.value === "" || e.target.value <0) e.target.value = 0;
                   updateForm({ personas: e.target.value });
                 }}
                 style={{ width: "80px" }}

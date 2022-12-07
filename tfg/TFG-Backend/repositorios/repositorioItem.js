@@ -1,10 +1,10 @@
 const Item = require("../models/Item");
 //Operaciones de creación
-function createItem(item) {
+async function createItem(item) {
   //Creamos el item
-  const newItem = new Item(iyrm);
+  const newItem = new Item(item);
   //Guardamos el item en la base de datos
-  newItem.save();
+   await newItem.save();
 
   return newItem._id
 }

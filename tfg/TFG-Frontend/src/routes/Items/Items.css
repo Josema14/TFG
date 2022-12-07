@@ -90,8 +90,7 @@ align-items: center;
 
 .item-form-container-body-image{
     display: flex;
-    
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
    
 }
@@ -106,7 +105,8 @@ align-items: center;
     display: inline-block;
     padding: 6px 12px;
     cursor: pointer;
-    margin-left: 130px;
+    margin-left: 20px;
+    
 }
 
 .item-form-container-footer{

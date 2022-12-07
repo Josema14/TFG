@@ -187,6 +187,30 @@ export function updateUser(userdata){
   )
 }
 
+export function uploadItem(item){
+  
+  
+  const formData = new FormData();
+  formData.append('propietario', getUsuario())
+  formData.append('fechaFinal', item.fechaInicial.add(item.duracion,"day"))
+
+  formData.append('tipo', "Oficial")
+  for (const property in item) {
+    if(item[property] !== null)
+    formData.append(property, item[property]);
+  }
+  console.log(formData)
+
+  
+  
+ 
+  return axios.post("/item", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  } )
+}
+
 export function getEmail() {
   //Obtenemos el email del almacenamiento local
   return localStorage.getItem("email");
