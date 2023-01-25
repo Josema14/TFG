@@ -14,6 +14,14 @@ const TradeSchema = new mongoose.Schema({
         type: String,
         required: [true, "Introduzca un comprador"],
     },
+    tituloPropietario:{
+        type: String,
+        required: [true, "Introduzca un título de propietario"],
+    },
+    tituloCliente:{
+        type: String,
+        required: [true, "Introduzca un título de cliente"],
+    },
     itemPropietario:{
         type: Schema.Types.ObjectId,
         ref: 'Items',

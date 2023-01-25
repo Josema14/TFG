@@ -79,14 +79,14 @@ const Trades = () => {
           let filas = [];
          
           
-          for(let message of data.result){
+          for(let message of data.trades){
           console.log(message)
             let item = {
               id: message._id,
               propietario: message.propietario,
               cliente: message.comprador,
-              title1: message.itemPropietario.titulo,
-              title2: message.itemComprador.titulo,
+              title1: message.tituloPropietario,
+              title2: message.tituloCliente,
               fecha: message.fecha,
               estado: message.estado,
               consulta: () => {
@@ -157,7 +157,7 @@ const Trades = () => {
           renderCell: (params) => {
             const onClick = (e) => {
               e.stopPropagation(); // don't select this row after clicking
-      
+              
               const api =  params.api;
               const thisRow =  {};
       
@@ -222,9 +222,9 @@ const Trades = () => {
               marginRight: "20px",
             }}
           >
-            <h2 style={{ marginLeft: "50px" }}>Tu propuesta</h2>
+            <h2 style={{ marginLeft: "50px" }}>Paquete ofertado</h2>
 
-            <h2 style={{ marginRight: "40px" }}>Paquete ofertado</h2>
+            <h2 style={{ marginRight: "40px" }}>Paquete ofrecido</h2>
           </div>
           <div
             style={{

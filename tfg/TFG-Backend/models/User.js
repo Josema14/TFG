@@ -10,12 +10,18 @@ const ProfileSchema = mongoose.Schema({
     description: String,
     twitter: String,
     instagram: String,
-    facebook: String
+    facebook: String,
+    publicaciones: { type: Number,
+        default: 0,},
+    intercambios: { type: Number,
+        default: 0,},
+    compras:{ type: Number,
+        default: 0,}
   });
 
 //Creamos el schema
 const UserSchema = new mongoose.Schema({
-    //Los campos de un usuario son: email, nombre, contraseña y fecha de creación
+  
     email: {
         type: String,
         required: [true, "Introduzca un correo electrónico"],
@@ -46,6 +52,11 @@ const UserSchema = new mongoose.Schema({
 
     
     trading: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Items'
+    },
+
+    published: {
         type: [Schema.Types.ObjectId],
         ref: 'Items'
     },

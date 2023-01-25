@@ -1,8 +1,9 @@
 const Trade = require("./models/Trade");
 const userService = require("./servicioUser")
 const itemService = require("./servicioItem")
+const jwt = require("jsonwebtoken");
 
-
+const repositorioTrade = require("./repositorios/repositorioTrades")
 //Consigue todos los mensajes de un usuario
 function getMessages(ids){
 
@@ -17,18 +18,33 @@ function getMessages(ids){
 
 //New Trade
 
-function newTrade(userHost,idHost,userClient,idClient){
+async function newTrade(userHost,idHost,userClient,idClient,token, tituloPropietario, tituloCliente){
 
-    const trade = new Trade({
-        propietario: userHost,
-        comprador: userClient,
-        itemPropietario: idHost,
-        itemComprador: idClient,
-        estado: "Pendiente",
-        fechaSolicitud: Date.now(),
-    })
+  //Comprobar token
 
-    return trade.save()
+  let decoded = await jwt.decode(token);
+  
+  if(decoded.username !== userClient) return null;
+
+ 
+  
+    const trade = {
+      propietario: userHost,
+      comprador: userClient,
+      tituloPropietario: tituloPropietario,
+      tituloCliente: tituloCliente,
+      itemPropietario: idHost,
+      itemComprador: idClient,
+      estado: "Pendiente",
+      fechaSolicitud: Date.now(),
+    }
+
+    let result = await repositorioTrade.createTrade(trade);
+
+    if(result) return result
+    else return {
+      message: "Internal Server Error"
+    }
 
 }
 
@@ -40,17 +56,53 @@ function getTrade(idTrade){
 
 //Cancel Trades By Id
 
-function cancelTradesByProduct(idTrade){
-    return Trade.updateMany(
-        { itemPropietario: idTrade },
-        { estado: "Cancelado" })
+async function cancelTradesByProduct(trade){
+
+  //Obtenemos el trade y modificamos los items para que sean oficiales si son intercambios
+
+  if(trade.itemPropietario.tipo === "Intercambio"){
+    trade.itemPropietario.tipo = "Oficial";
+    trade.itemPropietario.cantidad = 0;
+  }
+ 
+  if(trade.itemComprador.tipo === "Intercambio"){
+  trade.itemComprador.tipo = "Oficial";
+  trade.itemComprador.cantidad = 0;
+  }
+
+  await trade.itemPropietario.save()
+  await trade.itemComprador.save()
+
+  //Una vez modificado ambos viajes, si ambos son items de intercambio, cancelamos todos sus intercambios
+  await repositorioTrade.cancelAllTrades(trade.itemPropietario._id,trade._id)
+  await repositorioTrade.cancelAllTrades(trade.itemComprador._id,trade._id)
+}
+
+async function getTradePopulated(idTrade){
+  return await repositorioTrade.getTradePopulated(idTrade);
+}
+
+async function endTrade(trade){
+  
+  trade.estado = "Aceptado";
+  return await trade.save()
 }
 
 //Cancel Trade
-function cancelTrade(idTrade){
+async function cancelTrade(idTrade, token){
+  //Comprobamos si el token funciona
+  let decoded = await jwt.decode(token);
+ 
+  if(decoded === null) return null;
 
-  return Trade.findOneAndUpdate({_id : idTrade},{estado: "Cancelado"});
+  return await repositorioTrade.refuseTrade(idTrade)
 
+
+}
+
+async function cancelAllTradesById(idItem){
+
+  return await  repositorioTrade.cancelAllTradesById(idItem);
 }
 
 //Accept Trade
@@ -102,4 +154,4 @@ async function acceptTrade(trade) {
     itemService.deleteItemById(_id1)
   }
 
-module.exports = { getMessages, newTrade, getTrade, cancelTradesByProduct, acceptTrade,cancelTrade  };
+module.exports = { getMessages, newTrade, getTrade, cancelTradesByProduct, acceptTrade,cancelTrade,endTrade, getTradePopulated,cancelAllTradesById  };

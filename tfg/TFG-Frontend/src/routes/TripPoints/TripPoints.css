@@ -1,15 +1,15 @@
 .tripPoints{
     display: grid;
     place-items: center;
-    height: 100vh;
+    height: 75vh;
     background-color: #dadbd3;
 }
 
 
 .tripPoints-container{
    background-color: white;
-   height: 90vh;
-   width: 62.5vw;
+   height: 55vh;
+   width: 40.5vw;
    display: flex;
    flex-direction: column;
    justify-content: center;
@@ -35,12 +35,7 @@
    
     justify-content: space-evenly;
 }
-.tripPoints-secondContainer{
-    display: flex;
-   
 
-    justify-content: space-evenly;
-}
 .tripPoints-container-header{
     display: flex;
     justify-content: center;
@@ -48,11 +43,25 @@
     height: 10%;
 }
 
+.tripPoints-container-body{
+
+    display: flex;
+    background-color: #ededed;
+    flex-direction: column;
+    
+   
+    height: 80%;
+    width: 40.5vw;
+   
+    justify-content: space-evenly;
+    
+}
+
 .tripPoints-container-footer{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 7%;
+    height: 10%;
 }
 
 
@@ -72,16 +81,3 @@
     
   }
 
-.tripPoints-container-body{
-
-    display: flex;
-    background-color: #ededed;
-    flex-direction: column;
-    
-   
-    height: 83%;
-    width: 62.5vw;
-   
-    justify-content: space-evenly;
-    
-}

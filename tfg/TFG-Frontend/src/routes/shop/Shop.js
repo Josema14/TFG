@@ -59,11 +59,15 @@ const Shop = () => {
   //Función para enviar los datos al servidor
   async function onSubmit(e) {
     e.preventDefault();
+    let fechaInicial =form.fechaInicial
+    let fechaFinal = form.fechaFinal
 
+    if(form.fechaInicial !== null) fechaInicial = form.fechaInicial.format('YYYY-MM-DD')
+    if(form.fechaFinal !== null) fechaFinal = form.fechaFinal.format('YYYY-MM-DD')
     search(
       form.titulo,
-      form.fechaInicial,
-      form.fechaFinal,
+      fechaInicial,
+      fechaFinal,
       form.personas,
       form.intercambio,
       form.oficial,
@@ -71,6 +75,7 @@ const Shop = () => {
       form.precioMaximo,
     ).then(function (response) {
       setItems(response.data);
+     
       setPage(1);
     });
   }
@@ -117,7 +122,7 @@ const Shop = () => {
                   label="Rango final..."
                   value={form.fechaFinal}
                   onChange={(e) => {
-                    updateForm({ fechaFinal: e });
+                    updateForm({ fechaFinal: e});
                   }}
                   renderInput={(params) => (
                     <TextField {...params} size="small" style={{ width: "155px" }} />
@@ -183,7 +188,7 @@ const Shop = () => {
               />
             </div>
 
-            <FormGroup column={true}>
+            <FormGroup column="true">
               <FormControlLabel
                 control={<Checkbox defaultChecked  style={{
                   transform: "scale(0.9)",

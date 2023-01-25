@@ -22,7 +22,13 @@ var storage2 = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     console.log();
-    cb(null, req.body.propietario + req.body.titulo  + "." + mime.extension(file.mimetype));
+    cb(
+      null,
+      req.body.propietario +
+        req.body.titulo +
+        "." +
+        mime.extension(file.mimetype)
+    );
   },
 });
 
@@ -64,6 +70,7 @@ app.get("/", (request, response, next) => {
   next();
 });
 
+/*
 //Registro
 app.post("/register", (request, response) => {
   bcrypt
@@ -100,48 +107,81 @@ app.post("/register", (request, response) => {
       });
     });
 });
+*/
+//Búsqueda CORRECTO
+app.get("/items/search", (request, response) => {
+
+  
+  itemService
+    .searchItems(request.query)
+    .then((result) => {
+      //Devolvemos los items
+      return response.status(200).send(result);
+    }) //Error
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+app.post("/users/search", async (request, response) => {
+
+ 
+  let user = await userService.getFullUsuarioByName(request.body.name);
+
+  if(user){
+
+    //Si tenemos el usuario, realizaremos la búsqueda de items
+
+    let items = await itemService.searchUserItems(user, request.body)
+
+    return response.status(200).send({
+      items: items,
+    })
+    
+  }
+
+});
 
 //Registro arreglado
 app.post("/users", async (request, response) => {
-  
-      try{
-        
-        //Intentamos crear el usuario
-        let user = await userService.createUser(request.body);
-       
-        response.status(201).send({
-          message: "User Created Successfully",
-          userId: user._id
-        });
-      } 
-      //Comprobación de errores
-      catch (error)  {
-      //Error email
-          if (error.code === 11000){
+  //Comprobación por si Front-End falla
+  if (request.body.password.lenght < 8) {
+    return response.status(400).send({
+      message: "Invalid Credentials",
+    });
+  }
 
-            //Mensaje con todos los errores
-            let message = {};
-            //Si hubiera varios mensajes de error
-            for (const property in error.keyPattern) {
-              if(error.keyPattern[property] !== null)
-              message[property] = `${property} already in use`;
-            }
-          
-            //Enviamos los errores
-            response.status(400).send({
-              message,
-              
-            });
-          }
+  try {
+    //Intentamos crear el usuario
+    let user = await userService.createUser(request.body);
 
+    response.status(201).send({
+      message: "User Created Successfully",
+      userId: user._id,
+    });
+  } catch (error) {
+    //Comprobación de errores
+    //Error email
+    console.log(error);
+    if (error.code === 11000) {
+      //Mensaje con todos los errores
+      let message = {};
+      //Si hubiera varios mensajes de error
+      for (const property in error.keyPattern) {
+        if (error.keyPattern[property] !== null)
+          message[property] = `${property} already in use`;
       }
-    
-      
+
+      //Enviamos los errores
+      response.status(400).send({
+        message,
+      });
+    }
+  }
 });
 
-
-//Login
-
+//Login antiguo
+/*
 app.post("/login", (request, response) => {
   User.findOne({ email: request.body.email })
     .then((user) => {
@@ -192,6 +232,19 @@ app.post("/login", (request, response) => {
       });
     });
 });
+*/
+app.post("/users/login", async (request, response) => {
+  //Le enviamos la información al servicio de usuarios
+  let result = await userService.userLogin(request.body);
+
+  //Si el resultado no es nulo lo enviamos.
+
+  if (result != null) response.status(200).send({ result });
+  else
+    response.status(400).send({
+      message: "Invalid Credentials",
+    });
+});
 
 app.get("/user/:name", async (request, response) => {
   let usuario = await userService.getUsuarioByName(request.params.name);
@@ -216,7 +269,10 @@ app.put("/user", avatar.single("imageData"), async (request, response) => {
 app.post("/user/tripPoints", async (request, response) => {
   console.log(request.body);
   try {
-    let user = await userService.addPoints(request.body.name,request.body.points);
+    let user = await userService.addPoints(
+      request.body.name,
+      request.body.points
+    );
     return response.status(200).send({
       points: user.tripPoints,
     });
@@ -246,24 +302,27 @@ app.post("/item", (request, response) => {
 });
 */
 
-app.post("/item",images.single("imagen"), async(request, response) => {
- 
+app.post("/item", images.single("imagen"), async (request, response) => {
   let urlImagen;
   if (request.file != undefined) urlImagen = request.file.filename;
+  else return response.status(400).send();
 
   try {
-    console.log(request.body)
-    let item = await itemService.newItem(request.body,urlImagen);
-    console.log(item)
+    console.log(request.body);
+    let item = await itemService.newItem(request.body, urlImagen);
+    
+    if(request.body.tipo === "Intercambio") await userService.addNewTradeItem(request.body.propietario,item._id)
+    else await userService.addPublishedItem(request.body.propietario,item._id)
+    
     return response.status(200).send();
   } catch (error) {
     console.error(error);
   }
-  
 });
 
-//GetItems
-app.get("/item", (request, response) => {
+//CAMBIOS 
+//GetItems CORRECTO
+app.get("/items", (request, response) => {
   itemService
     .getItems(request.query.name)
     .then((items) => {
@@ -277,8 +336,42 @@ app.get("/item", (request, response) => {
     });
 });
 
-//Recibir inventario
-app.get("/inventory", (request, response) => {
+//GetItems CORRECTO
+app.get("/items/:id", (request, response) => {
+  itemService
+    .getItem(request.query.id)
+    .then((item) => {
+      response.status(200).send(item);
+    })
+    .catch((e) => {
+      //Solo puede ocurrir un error de servidor
+      response.status(500).send({
+        message: "Internal Server Error",
+      });
+    });
+});
+
+//Recibir inventario CORRECTO por ahora
+app.get("/users/:name/items", async (request, response) => {
+
+  //Enviamos al servicio la información
+
+  let result = await userService.getUsuarioPopulated(request.query)
+  
+  //Si existe el resultado lo enviamos
+  if (result){
+    return response.status(200).send({
+      items : result.inventory.concat(result.trading) 
+    })
+  }
+  //Si ha surgido algún problema envíamos error
+  else {
+    response.status(500).send({
+      message: "Internal Server Error",
+      error,
+    });
+  }
+  /*
   userService
     .getUsuarioPopulated(request.query.name)
     .then((resultado) => {
@@ -294,20 +387,33 @@ app.get("/inventory", (request, response) => {
         error,
       });
     });
+    */
 });
 
-//getInventoryByMoneyandTime
-//Comprobar que hace bien la fecha
-app.get("/inventoryByPrice", (request, response) => {
-  userService.getUsuarioPopulated(request.query.name).then((result) => {
-    itemService
-      .getValidInventory(result, request.query.price, request.query._id)
-      .then((result) => {
-        return response.status(200).send({
-          result,
-        });
-      });
-  });
+
+//InventoryValid 
+//Correcto
+app.get("/users/:name/items/:id", async (request, response) => {
+
+  //Obtenemos el usuario y el paquete
+  let user = await userService.getUsuarioPopulated(request.query);
+ 
+  //Si existe el usuario obtenemos su inventario
+  if(user){
+    
+    let result = await itemService.getValidInventory(user,request.query.price, request.query._id)
+    console.log(result)
+    return response.status(200).send({
+      result,
+    })
+  }
+  //Si no existe el usuario envíamos error
+  else{
+    return response.status(400).send({
+      message: "Bad Request"
+    })
+  }
+
 });
 
 //Mensajes de intercambio
@@ -343,7 +449,27 @@ app.get("/messages", (request, response) => {
     });
 });
 
-//proponerTrade
+//Lista de intercambios CORRECTO FALTA ERRORES
+app.get("/users/:name/trades", async (request, response) => {
+
+  //Le envíamos la información al servicio de usuario
+  let user = await userService.getUsuarioTradesPopulated(request.query.token)
+
+
+  
+  if(user){
+    return response.status(200).send({
+      trades: user.message
+    })
+  }
+
+  else return response.status(400).send({
+    message: "Bad Request"
+  })
+ 
+});
+
+//proponerTrade 
 app.post("/proposeTrade", (request, response) => {
   tradeService
     .newTrade(
@@ -370,6 +496,49 @@ app.post("/proposeTrade", (request, response) => {
     });
 });
 
+//trade/new CORRECTO, FALTA ERRORES
+app.post("/trades", async (request, response) => {
+
+    let item1 = await itemService.getItem(request.body._idAnfitrion);
+    let item2 = await itemService.getItem(request.body._idPropuesto);
+  
+  //Le pasamos al servicio de intercambios la información de la aplicación
+  let result = await tradeService.newTrade(
+      request.body.usuarioAnfitrion,
+      request.body._idAnfitrion,
+      request.body.usuarioPropuesto,
+      request.body._idPropuesto,
+      request.body.token,
+      item1.titulo,
+      item2.titulo,
+     
+    )
+
+
+
+  
+  //Si se ha creado el intercambio, se lo aplicamos a ambos usuarios
+  if (result){
+    //Una vez tengamos la respuesta de vuelta, envíamos la respuesta
+    let respuesta = await userService.saveTradeUsers(request.body.usuarioAnfitrion, request.body.usuarioPropuesto,result)
+
+    if (respuesta) return response.status(201).send({
+      id: result,
+      message: "New Trade Created",
+    })
+
+    else return response.status(500).send({
+      message: "Internal Server Error"
+    })
+
+  }
+  else return response.status(400).send({
+    message: "Bad Request"
+  })
+   
+});
+
+
 app.post("/acceptTrade", (request, response) => {
   tradeService
     .getTrade(request.body.idTrade)
@@ -382,6 +551,42 @@ app.post("/acceptTrade", (request, response) => {
         .catch((error) => {});
     })
     .catch((error) => {});
+});
+
+//Aceptar intercambio
+app.post("/trades/accept", async (request, response) => {
+
+  //Llamamos al servicio de intercambios para obtener el intercambio
+
+  let trade = await tradeService.getTradePopulated(request.body.idTrade);
+  console.log(trade)
+  
+  //Si hemos obtenido el intercambio, cancelamos todos los intercambios que tengan el ítem propietario.
+  if (trade){
+    
+       //Cada usuario debe eliminar de su inventario el item intercambiado y añadir el nuevo
+       await userService.acceptTradeHost(trade.propietario, trade.itemPropietario._id, trade.itemComprador._id);
+       await userService.acceptTradeClient(trade.comprador, trade.itemComprador._id, trade.itemPropietario._id,trade.itemComprador.tipo);
+       //Aceptamos el intercambio y devolvemos la respuesta.
+
+    await tradeService.endTrade(trade)
+
+    //Si ambos fueran intercambios se haría en ambos
+    await tradeService.cancelTradesByProduct(trade)
+
+    
+ 
+
+  
+
+ 
+  }
+
+  
+  else return response.status(500).send({
+    message:"Internal Server Error"
+  })
+
 });
 
 //CancelTrade
@@ -397,73 +602,94 @@ app.post("/refuseTrade", (request, response) => {
     .catch((error) => {});
 });
 
-//Compra
-app.post("/purchase", (request, response) => {
-  //Obtenemos el usuario
-  userService
-    .getUsuarioPopulated(request.body.name)
-    .then((user) => {
-      //Comprobamos si ya tiene el paquete
-
-      for (item of user.inventory) {
-        if (item._id.equals(request.body._id)) {
-          response.status(500).send({
-            message: "Ya posee este objeto",
-          });
-          return;
-        }
-      }
-
-      for (item of user.trading) {
-        if (item.original.equals(request.body._id)) {
-          response.status(500).send({
-            message: "Ya posee este objeto en su lista de intercambio",
-          });
-          return;
-        }
-      }
-
-      //Si no tiene el paquete, disminuimos la cantidad y se lo añadiremos
-
-      //Disminuimos la cantidad del paquete
-
-      itemService
-        .purchaseItem(request.body._id)
-        .then((result) => {
-          console.log(result);
-          //añadimos el paquete al usuario
-          userService.addItem(user, request.body._id).then((result2) => {
-            console.log(result2);
-            response.status(200).send({
-              message: "Purchase Created Successfully",
-              result2,
-            });
-          });
-        })
-        .catch((error) => {});
-    })
-    .catch((error) => {});
-});
-
-//Búsqueda
-app.post("/search", (request, response) => {
+//CancelTrade Correcto por ahora
+app.post("/trades/refuse", async (request, response) => {
   console.log(request.body);
-  itemService
-    .searchItems(request.body)
-    .then((result) => {
-      //Devolvemos los items
-      return response.status(200).send(result);
-    }) //Error
-    .catch((error) => {
-      console.log(error);
-    });
+
+  //Le pasamos la id del intercambio al servicio
+
+  let result = await tradeService.cancelTrade(request.body.idTrade, request.body.token);
+
+  //Si es correcto devolvemos la respuesta, si no, devolvemos un error
+  if (result){
+    return response.status(200).send();
+  }
+
+  else return response.status(500).send({
+    message: "Internal Server Error"
+  })
+
 });
 
-//setChange
+//Compra Correcto por ahora
+app.post("/users/items/", async (request, response) => {
+  
+   //Enviamos al servicio la información
 
-app.post("/setTrade", (request, response) => {
-  //Hacer códigos de error
+   let result = await userService.itemPurchased(request.body)
 
+   
+   //Si existe el resultado se lo añadiremos a su inventario
+   if (result.user !== null){
+    
+    //Disminuimos la cantidad del paquete
+    
+    let itemResult = await itemService.purchaseItem(request.body._id, result.user.tripPoints)
+
+    //Si no ha surgido ningun error añadimos el item 
+    if(itemResult.item !==null){
+
+      let points = await userService.addItem(result.user, itemResult.item._id, itemResult.item.precio)
+      return response.status(200).send({
+        message: "Purchase Successfully",
+        points: points
+      });
+
+    }
+    //Si ha surgido algún error lo indicamos
+    else{
+      response.status(500).send({
+        message: itemResult.message, 
+      })
+
+    }
+   }
+   //Si ha surgido algún problema envíamos el error
+   else {
+     response.status(500).send({
+       message: result.message,
+      
+     });
+    }   
+});
+
+
+
+//Anunciar intercambio CORRECTO
+
+app.post("/items/trade", async (request, response) => {
+
+
+  //Enviamos la información al servicio de items
+  
+  let result = await itemService.setTradeItem(request.body);
+
+  //Si no ha surgido ningún problema envíamos la respuesta
+  if (result.item) {
+
+    await userService.addTradeItem(request.body, result.item);
+
+    return response.status(201).send({
+      message: "Item Created Successfully"
+    })
+  }
+  //Si ha surgido un problema envíamos el error
+  else {
+    return response.status(500).send({
+      message: result.message,
+    });
+  }
+/*
   itemService.setTrade(request.body._id, request.body.name).then((result) => {
     userService
       .addTradeItem(request.body.name, result._id, result.original)
@@ -473,9 +699,10 @@ app.post("/setTrade", (request, response) => {
           result,
         });
       });
-  });
+  });*/
 });
 
+//Borrar
 app.post("/cancelTrade", (request, response) => {
   itemService.getOriginalId(request.body._id).then((result) => {
     userService.cancelTrade(
@@ -492,6 +719,53 @@ app.post("/cancelTrade", (request, response) => {
   });
 
   //Hacer códigos de error
+});
+
+//ItemTrade delete CORRECTO FALTA CANCELADO EN CASCADA
+app.delete("/items/trade", async (request, response) => {
+
+  //Enviamos la información al servicio de items
+  
+  let result = await itemService.getOriginalId(request.body._id);
+  
+  if(result.id){
+   //Llamamos al servicio usuarios con la nueva id para hacer el cambio
+   console.log(result)
+   await userService.deleteTradeItemOriginal(request.body.name,
+      request.body._id,
+      result.id)
+
+   //Cancelar intercambios en cadena si estaba en alguno
+
+   
+   await tradeService.cancelAllTradesById(request.body._id);
+
+   await itemService.cancelItem(request.body._id);
+
+   
+  //Enviamos la respuesta
+  return response.status(200).send({
+    message: "Item Deleted Successfully",
+  });
+}
+
+  else{
+    //Lo borramos del usuario
+    await userService.deleteTradeItem(request.body.name,request.body._id);
+    //Cancelamos en cascada
+    await tradeService.cancelAllTradesById(request.body._id);
+
+    await itemService.cancelItem(request.body._id);
+
+    
+
+     //Enviamos la respuesta
+  return response.status(200).send({
+    message: "Item Deleted Successfully",
+  });
+
+  }
+
 });
 
 ////Listener

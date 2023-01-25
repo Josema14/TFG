@@ -13,7 +13,7 @@ async function createItem(item) {
 async function findItemById(id) {
   //Buscamos el item en la base de datos y lo devolvemos
 
-  return await Item.ItemById(id);
+  return await Item.findById(id);
 }
 
 async function findAllItems() {

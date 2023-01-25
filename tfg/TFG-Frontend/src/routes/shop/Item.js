@@ -15,6 +15,7 @@ import MenuItem from "@mui/material/MenuItem";
 import {
   cancelTrade,
   getEmail,
+  getUsuario,
   itemsByPrice,
   proposeTrade,
   purchase,
@@ -68,11 +69,13 @@ export default function Card(props) {
     //Enviamos la petición con axios
 
     purchase(item._id)
-      .then(() => {
+      .then((result) => {
+        localStorage.setItem("points",result.data.points)
         navigate("/inventory");
       })
       .catch((e) => {
-        alert("Ya tienes este paquete en tu inventario");
+        alert(e.response.data.message);
+        console.log(e.response.data.message)
       });
   }
 
@@ -108,13 +111,13 @@ export default function Card(props) {
           Cancelar intercambio
         </button>
         </div>
-      ) : (
+      ) : ((item.propietario !== getUsuario()) ? (
         <div>
         <button className="card-item-button two" onClick={setIntercambio}>
           Intercambiar
         </button>
-        </div>
-      ))
+        </div>)
+      :(<></>)))
     }
 
     else {
@@ -331,7 +334,7 @@ export default function Card(props) {
 
       <div className="card-footer">
         <div className="card-item-price-container">
-          <label className="card-item-text-price one">{item.precio}€</label>
+          <label className="card-item-text-price one">{item.precio} TP</label>
         </div>
         <div className="card-item-button-container">
           <a href={"http://localhost:3000/profile/" + item.propietario} className="three">@{item.propietario}</a>

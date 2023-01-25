@@ -45,7 +45,7 @@ const Header = (props) => {
       {/* Grupo izquierdo de botones */}
       <div className="header__groupButtons">
         <a href="/">
-        <img className="header__logo" src="logo192.png" alt="header" />
+        <img className="header__logo" src= {require("./TripTradesLogo.png")} alt="header" />
         </a>
         <Tooltip title="Productos">
         <IconButton component={Link} to="/shop" >
@@ -102,6 +102,7 @@ const Header = (props) => {
       >
         <MenuItem component={Link} to={"/profile/" + localStorage.getItem("user")} onClick={() => {handleClose();   this.forceUpdate()}}>Perfil</MenuItem>
         <MenuItem component={Link} to={"/item"} onClick={handleClose}>Publicar Experiencia</MenuItem>
+        <MenuItem component={Link} to={"/tradeItem"} onClick={handleClose}>Publicar Intercambio</MenuItem>
         <MenuItem component={Link} to={"/"}  onClick={() => {
              localStorage.setItem("email","null")
              localStorage.setItem("user","null")

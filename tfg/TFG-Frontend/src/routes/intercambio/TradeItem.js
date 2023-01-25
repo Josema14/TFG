@@ -1,5 +1,5 @@
 import React, { useState, createRef  } from "react";
-import "./Items.css";
+import "./TradeItem.css";
 
 import TextField from "@mui/material/TextField";
 
@@ -9,8 +9,8 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {  useNavigate } from "react-router-dom";
 
-import { uploadItem } from "../../Controlador";
-export default function Items() {
+import { uploadTradeItem } from "../../Controlador";
+export default function TradeItem() {
 
   const [imageText,setImageText] = useState("Use el botón para subir una imagen.")
   const [form, setForm] = useState({
@@ -38,9 +38,9 @@ export default function Items() {
 
   function onSubmit(e) {
     e.preventDefault();
-    if(form.imagen == null){ setImageText("Debe introducir una imagen para la publicación."); return }
+    if(form.imagen === null){ console.log("entro");setImageText("Debe introducir una imagen para la publicación."); return }
     
-    uploadItem(form).then((res) => {
+    uploadTradeItem(form).then((res) => {
       navigate("/")
     });
   }
@@ -54,7 +54,7 @@ export default function Items() {
     <div className="item-background">
       <form action="#" onSubmit={onSubmit} className="item-form-container">
         <div className="item-form-container-header">
-          <h1>Nueva Publicación</h1>
+          <h1>Nuevo Intercambio</h1>
           <hr className="item-form-container-header-hr"/>
         </div>
       
@@ -194,12 +194,10 @@ export default function Items() {
                   id="input-with-sx"
                   label="Existencias"
                   variant="standard"
-                  value={form.cantidad}
-                  onChange={(e) => 
-                    {
-                      if (e.target.value > 10) e.target.value = 10;
-                      else if(e.target.value === "" || e.target.value <1) e.target.value = 1;
-                    updateForm({ cantidad: e.target.value })}}
+                  value={1}
+                  inputProps={
+                    { readOnly: true, }
+                  }
                   type="number"
                   required
                   style={{ backgroundColor: "white", width: "100px" }}

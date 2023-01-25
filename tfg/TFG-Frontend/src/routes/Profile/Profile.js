@@ -18,6 +18,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { updateUser } from "../../Controlador";
 
 import "./Profile.css";
+import { getSelectUnstyledUtilityClass } from "@mui/base";
 
 export default function Profile() {
   const [usuario, setUsuario] = useState({});
@@ -25,6 +26,12 @@ export default function Profile() {
     twitter:"",
     instagram:"",
     facebook:"",
+  });
+
+  const [stats, setStats] = useState({
+    intercambios:0,
+          compras:0,
+          publicaciones:0,
   });
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
@@ -58,6 +65,11 @@ export default function Profile() {
           twitter:res.data.usuario.profile.twitter,
         instagram:res.data.usuario.profile.instagram,
         facebook:res.data.usuario.profile.facebook,
+        })
+        setStats({
+          intercambios:res.data.usuario.profile.intercambios,
+          compras:res.data.usuario.profile.compras,
+          publicaciones:res.data.usuario.profile.publicaciones,
         })
       }
       })
@@ -248,18 +260,18 @@ export default function Profile() {
           {/*Estadísticas*/}
           <div className="profile-container-body-stats">
             <div className="profile-container-body-stats-item">
-              <div className="profile-container-stats-item-title">52</div>
+              <div className="profile-container-stats-item-title">{stats.intercambios}</div>
               <div className="profile-container-stats-item-txt">
                 Intercambios
               </div>
             </div>
             <div className="profile-container-body-stats-item">
-              <div className="profile-container-stats-item-title">300</div>
+              <div className="profile-container-stats-item-title">{stats.compras}</div>
               <div className="profile-container-stats-item-txt">Compras</div>
             </div>
 
             <div className="profile-container-body-stats-item">
-              <div className="profile-container-stats-item-title">52</div>
+              <div className="profile-container-stats-item-title">{stats.publicaciones}</div>
               <div className="profile-container-stats-item-txt">Anuncios</div>
             </div>
           </div>

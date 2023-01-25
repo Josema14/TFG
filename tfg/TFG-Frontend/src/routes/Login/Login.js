@@ -48,9 +48,10 @@ function Login(props) {
     login(form.email, form.password).then ((response) => {
 
       //Obtenemos el usuario 
-      const user = response.data;
+      const user = response.data.result;
       
       //Preparamos el login
+      localStorage.setItem("token", user.token)
       localStorage.setItem("email", user.email)
       localStorage.setItem("user", user.user)
       localStorage.setItem("img",user.image)

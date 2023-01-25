@@ -8,8 +8,9 @@ import Trades from "./routes/Trades/Trades";
 import Footer from "./routes/home/Footer/Footer";
 import Inventory from "./routes/Inventory/Inventory";
 import Profile from "./routes/Profile/Profile";
+import TradeItem from "./routes/intercambio/TradeItem";
 import {React, useEffect,useState} from 'react';
-import RadioGroupContext from "@mui/material/RadioGroup/RadioGroupContext";
+
 import TripPoints from "./routes/TripPoints/TripPoints";
 import Items from "./routes/Items/Items";
 export default function Links() {
@@ -100,7 +101,18 @@ export default function Links() {
             <Items/>
           }
         />
+
+<Route
+          exact
+          path="/tradeItem"
+          element={
+            //Redireccionamos si no estamos logueados
+            <TradeItem/>
+          }
+        />
       </Routes>
+
+      
 
       {/* Footers */}
       <Footer />

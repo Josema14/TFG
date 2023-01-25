@@ -16,6 +16,35 @@ async function findUserById(id) {
   return await User.findById(id);
 }
 
+async function findUserByEmail(email) {
+  return await User.findOne({ email: email });
+}
+
+async function findUserPopulated(name) {
+  return await User.findOne({ name: name })
+    .populate("inventory")
+    .populate("trading")
+    .exec();
+}
+
+async function findUserTradesPopulated(name) {
+  return await User.findOne({ name: name }).populate([
+    {
+      path: "message",
+      populate: {
+        path: "itemComprador",
+      },
+    },
+    {
+      path: "message",
+      populate: {
+        path: "itemPropietario",
+      },
+    },
+  ]);
+  //.populate("message").exec()
+}
+
 async function findAllUsers() {
   //Ejecutamos una consulta vacía
   return await User.find().exec();
@@ -44,6 +73,8 @@ async function addPointsByName(username, points) {
   if (user.tripPoints == undefined) user.tripPoints = Number(points);
   else user.tripPoints += Number(points);
 
+  if(user.tripPoints <0) user.tripPoints = 0;
+
   console.log(user.tripPoints);
   return await user.save();
 }
@@ -61,13 +92,31 @@ async function updateUserProfileByName(username, newProfile) {
   ).exec();
 }
 
+async function findUserPublishedPopulated(username){
+
+  return await User.findOne({ name: username })
+  .populate("inventory")
+  .populate("trading")
+  .populate("published")
+  .exec();
+
+
+}
+
+
+
 module.exports = {
   createUser,
   findUserById,
   findAllUsers,
+  findUserByName,
+  findUserPopulated,
+  findUserTradesPopulated,
+  findUserPublishedPopulated,
   deleteUserById,
   deleteUserByName,
   updateUser,
   updateUserProfileByName,
   addPointsByName,
+  findUserByEmail,
 };
